@@ -19,13 +19,15 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 2. Inicio → elegir el barrio en **Tu ubicación** (Bella Vista por defecto) → **Aire acondicionado**
 3. Tipo de servicio → **Reparación**
 4. Aparato → **Aire split**
-5. Marca → **Marca X**
+5. Marca → **Marca X** (LG, Samsung, Nisato, Sankey, Samurai, Marca X o «No sé / otra»)
 6. Lista de técnicos → tocar la tarjeta de **Carlos Méndez**
 7. Perfil → **Elegir a Carlos**
 8. ¿Cuándo lo necesitas? → **Lo antes posible** (el camino rápido de la demo) o **Agendar una cita** (ver más abajo) → **Continuar**
 9. Confirmación → **Confirmar**: aparece el tiempo que tomó el pedido y si se superó el reto
 10. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
 11. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
+
+Solo **Aire acondicionado** pasa por tipo de servicio, aparato y marca. **Electricidad** (instalación de luces, líneas de corriente, revisión de corriente eléctrica, tablero, tomacorrientes, cableado, cortocircuito) y **Plomería** piden directamente el trabajo. Las opciones de cada oficio están en `APARATOS`, dentro del `<script>` de `index.html`.
 
 Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Volver al inicio** y **Cerrar sesión** reinician la demo.
 

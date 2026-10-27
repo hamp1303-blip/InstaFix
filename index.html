@@ -540,7 +540,7 @@
       <svg><use href="#i-ubicacion"/></svg>
       <span style="flex:1"><small>Tu ubicación en Ciudad de Panamá</small><select id="barrio" aria-label="Barrio"></select></span>
     </label>
-    <h1>¿Qué se dañó?</h1>
+    <h1>¿Qué necesita?</h1>
     <p class="sub">Técnicos verificados, con precio antes de confirmar.</p>
     <div class="oficios">
       <button class="oficio" data-oficio="Plomería">
@@ -550,7 +550,7 @@
       </button>
       <button class="oficio" data-oficio="Electricidad">
         <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
-        <span>Electricidad<small>Tableros, cortos, instalaciones</small></span>
+        <span>Electricidad<small>Luces, líneas de corriente, revisiones</small></span>
         <svg class="chevron"><use href="#i-chevron"/></svg>
       </button>
       <button class="oficio" data-oficio="Aire acondicionado">
@@ -585,21 +585,11 @@
   <section class="screen" id="s-aparato">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <div class="progreso"><span style="width:66%"></span></div><span class="paso">Paso 2 de 3</span>
+      <div class="progreso"><span id="progreso-aparato" style="width:66%"></span></div><span class="paso" data-texto="paso-aparato">Paso 2 de 3</span>
     </div>
-    <h2>¿Qué aparato es?</h2>
-    <p class="sub">Así te mostramos técnicos que ya lo conocen.</p>
-    <div class="chips" data-campo="aparato">
-      <button class="chip">Aire split</button>
-      <button class="chip">Aire de ventana</button>
-      <button class="chip">Refrigeradora</button>
-      <button class="chip">Lavadora</button>
-      <button class="chip">Calentador</button>
-      <button class="chip">Tablero eléctrico</button>
-      <button class="chip">Tubería</button>
-      <button class="chip">Inodoro</button>
-      <button class="chip">Bomba de agua</button>
-    </div>
+    <h2 data-texto="aparato-titulo">¿Qué aparato es?</h2>
+    <p class="sub" data-texto="aparato-sub">Así te mostramos técnicos que ya lo conocen.</p>
+    <div class="chips" id="opciones-aparato" data-campo="aparato"></div>
   </section>
 
   <!-- 5. Marca -->
@@ -613,9 +603,9 @@
     <div class="chips" data-campo="marca">
       <button class="chip">LG</button>
       <button class="chip">Samsung</button>
-      <button class="chip">Carrier</button>
-      <button class="chip">Daikin</button>
-      <button class="chip">Midea</button>
+      <button class="chip">Nisato</button>
+      <button class="chip">Sankey</button>
+      <button class="chip">Samurai</button>
       <button class="chip">Marca X</button>
       <button class="chip">No sé / otra</button>
     </div>
@@ -919,6 +909,14 @@
     'Aire acondicionado': { solicitud: 'Reparación de aire split', citas: [[9, 'Mantenimiento de aire de ventana', 'Obarrio'], [14, 'Instalación de aire split', 'El Cangrejo']] }
   };
 
+  // Lo que se puede pedir en cada oficio. Solo el aire acondicionado pregunta tipo de servicio y marca.
+  const APARATOS = {
+    'Aire acondicionado': ['Aire split', 'Aire de ventana', 'Refrigeradora'],
+    'Electricidad': ['Instalación de luces', 'Instalación de líneas de corriente', 'Revisión de corriente eléctrica', 'Tablero eléctrico', 'Tomacorrientes e interruptores', 'Cableado', 'Cortocircuito o apagón'],
+    'Plomería': ['Tubería', 'Fuga de agua', 'Inodoro', 'Lavamanos y llaves', 'Bomba de agua', 'Calentador de agua']
+  };
+  const esAire = a => APARATOS['Aire acondicionado'].includes(a);
+
   const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', modo: 'ahora', fecha: null, hora: null };
   const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
   const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() };
@@ -950,6 +948,9 @@
   const mayus = s => s.charAt(0).toUpperCase() + s.slice(1);
   const fechaLarga = d => mayus(d.toLocaleDateString('es-PA', { weekday: 'long', day: 'numeric', month: 'long' }));
   const hora12 = h => h === 12 ? '12:00 p. m.' : h > 12 ? `${h - 12}:00 p. m.` : `${h}:00 a. m.`;
+  // Nombre del servicio pedido, según el oficio: el aire lleva tipo y marca; lo demás es el trabajo elegido
+  const servicio = () => esAire(estado.aparato) && estado.tipo ? `${estado.tipo} de ${estado.aparato.toLowerCase()}`
+    : estado.tipo === 'Emergencia' ? `Emergencia: ${estado.aparato.toLowerCase()}` : estado.aparato;
   const esAgendada = () => estado.modo === 'agendada' && estado.fecha && estado.hora != null;
   const proximosDias = () => Array.from({ length: 7 }, (_, i) => {
     const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return d;
@@ -1067,9 +1068,18 @@
   function preparar(id) {
     const t = estado.tecnico;
     if (id === 's-tipo') texto('oficio', estado.oficio);
+    if (id === 's-aparato') {
+      const aire = estado.oficio === 'Aire acondicionado';
+      const opciones = estado.oficio === 'Emergencia' ? [...new Set(Object.values(APARATOS).flat())] : APARATOS[estado.oficio];
+      $('#opciones-aparato').innerHTML = opciones.map(o => `<button class="chip${o === estado.aparato ? ' sel' : ''}">${o}</button>`).join('');
+      texto('aparato-titulo', aire ? '¿Qué aparato es?' : '¿Qué trabajo necesitas?');
+      texto('aparato-sub', aire ? 'Así te mostramos técnicos que ya lo conocen.' : 'Así te mostramos técnicos que ya lo hacen.');
+      texto('paso-aparato', aire ? 'Paso 2 de 3' : 'Último paso');
+      $('#progreso-aparato').style.width = aire ? '66%' : '100%';
+    }
     if (id === 's-lista') {
       const lista = ordenados();
-      texto('resumen', `${estado.tipo} · ${estado.aparato} · ${estado.marca}`);
+      texto('resumen', esAire(estado.aparato) ? `${estado.tipo} · ${estado.aparato} · ${estado.marca}` : servicio());
       texto('orden', `Cerca de ${estado.barrio}, ordenados por el que llega primero`);
       $('#lista-tecnicos').innerHTML = lista.map((x, i) => `
         <button class="tarjeta" data-tecnico="${x.id}">
@@ -1116,7 +1126,7 @@
       const llegada = new Date(Date.now() + minutos(t) * 60000).toLocaleTimeString('es-PA', { hour: 'numeric', minute: '2-digit' });
       const agendada = esAgendada();
       $('#confirmacion-filas').innerHTML = `
-        <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()} – ${estado.marca}</b></div>
+        <div class="fila"><span>Servicio</span><b>${servicio()}${esAire(estado.aparato) ? ' – ' + estado.marca : ''}</b></div>
         <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
         <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
         <div class="fila num"><span>Precio estimado</span><b>${t.precio}<small>sin repuestos</small></b></div>
@@ -1133,7 +1143,7 @@
         <div class="fila num"><span>Hora</span><b>${hora12(estado.hora)}</b></div>
         <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
         <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
-        <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()}</b></div>
+        <div class="fila"><span>Servicio</span><b>${servicio()}</b></div>
         <div class="fila num"><span>Precio estimado</span><b>${t.precio}<small>sin repuestos</small></b></div>`;
     }
     if (id === 's-tecnico') pintarTecnico();
@@ -1150,7 +1160,7 @@
     }
     if (id === 's-pago') {
       $('#pago-filas').innerHTML = `
-        <div class="fila"><span>${estado.tipo} de ${estado.aparato.toLowerCase()}</span><b>${t.total}</b></div>
+        <div class="fila"><span>${servicio()}</span><b>${t.total}</b></div>
         <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>`;
       texto('como', `¿Cómo te fue con ${nombreCorto(t)}?`);
       pintarEstrellas(5);
@@ -1365,7 +1375,12 @@
 
     if (el.dataset.ir) return ir(el.dataset.ir);
     if (el.dataset.rol) { estado.rol = el.dataset.rol; aplicarRol(); return ir('s-bienvenida'); }
-    if (el.dataset.oficio) { estado.oficio = el.dataset.oficio; return ir('s-tipo'); }
+    if (el.dataset.oficio) {
+      estado.oficio = el.dataset.oficio;
+      if (estado.oficio === 'Aire acondicionado') return ir('s-tipo');
+      estado.tipo = ''; estado.aparato = ''; // electricidad y plomería: se elige el trabajo directamente
+      return ir('s-aparato');
+    }
     if (el.dataset.tecnico) {
       estado.tecnico = TECNICOS.find(x => x.id === el.dataset.tecnico);
       estado.fecha = null; estado.hora = null; // la agenda es de cada técnico
@@ -1382,7 +1397,7 @@
       grupo.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
       el.classList.add('sel');
       estado[grupo.dataset.campo] = el.textContent.trim();
-      const siguiente = { tipo: 's-aparato', aparato: 's-marca', marca: 's-lista' }[grupo.dataset.campo];
+      const siguiente = { tipo: 's-aparato', aparato: esAire(estado.aparato) ? 's-marca' : 's-lista', marca: 's-lista' }[grupo.dataset.campo];
       return setTimeout(() => ir(siguiente), 150);
     }
 
@@ -1404,7 +1419,7 @@
         return;
       }
       case 'emergencia':
-        estado.tipo = 'Emergencia';
+        estado.tipo = 'Emergencia'; estado.oficio = 'Emergencia'; estado.aparato = '';
         return ir('s-aparato');
       case 'atras':
       case 'colgar':
