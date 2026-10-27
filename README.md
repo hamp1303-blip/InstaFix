@@ -14,18 +14,42 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 
 ## Recorrido de la demo (reto de los 60 segundos)
 
-1. Inicio de sesión → escribir cualquier correo y contraseña y tocar **Iniciar sesión**, o tocar **Entrar como invitado** (aquí arranca el cronómetro). También están **Regístrate ahora**, **Recordarme** y **¿Olvidaste tu contraseña?**; todo es simulado y la contraseña nunca se guarda
+0. Primera pantalla → **Necesito un técnico** (cliente) o **Soy técnico** (ver más abajo)
+1. Inicio de sesión → escribir cualquier correo y contraseña y tocar **Iniciar sesión**, o tocar **Entrar como invitado** (aquí arranca el cronómetro). También están **Crear cuenta**, **Recordarme** y **¿Olvidaste tu contraseña?**; todo es simulado y la contraseña nunca se guarda
 2. Inicio → elegir el barrio en **Tu ubicación** (Bella Vista por defecto) → **Aire acondicionado**
 3. Tipo de servicio → **Reparación**
 4. Aparato → **Aire split**
 5. Marca → **Marca X**
 6. Lista de técnicos → tocar la tarjeta de **Carlos Méndez**
 7. Perfil → **Elegir a Carlos**
-8. Confirmación → **Confirmar**: aparece el tiempo que tomó el pedido y si se superó el reto
-9. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
-10. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
+8. ¿Cuándo lo necesitas? → **Lo antes posible** (el camino rápido de la demo) o **Agendar una cita** (ver más abajo) → **Continuar**
+9. Confirmación → **Confirmar**: aparece el tiempo que tomó el pedido y si se superó el reto
+10. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
+11. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
 
-Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la bienvenida, tienen botón de volver. **Volver al inicio** reinicia la demo.
+Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Volver al inicio** y **Cerrar sesión** reinician la demo.
+
+## Cita agendada
+
+En **¿Cuándo lo necesitas?**, el cliente elige entre dos opciones:
+
+- **Lo antes posible**: el técnico sale ya y llega en el tiempo estimado.
+- **Agendar una cita**: se elige el día (los próximos 7 días) y la hora. Solo se pueden elegir los días en que ese técnico trabaja (Ana no atiende fines de semana) y las horas libres: las ocupadas aparecen tachadas y las que ya pasaron hoy no se pueden elegir. Cada técnico tiene su propia agenda.
+
+Después de **Confirmar cita** aparece la pantalla **Cita agendada** con el resumen, **Llamar** y **Mensaje**, y tres botones: **Simular el día de la cita** (sigue con el seguimiento, el pago y la garantía), **Reprogramar** y **Cancelar cita** (gratis hasta 2 horas antes). Una **Emergencia** no se agenda: va directo a confirmar.
+
+Las horas ocupadas son de ejemplo. Los días y horarios de cada técnico están en `TECNICOS` (`dias`, `desde`, `hasta`).
+
+## Lado del técnico
+
+Con **Soy técnico** la app muestra las mismas pantallas de entrada con textos para técnicos. **Crear cuenta de técnico** pide además el servicio que ofrece y el barrio desde donde sale, y avisa que se verificarán la cédula, la foto y las referencias. Al entrar (o con **Ver cómo funciona (demo)**) aparece **Tus trabajos**:
+
+- un interruptor **Disponible / Desconectado** para recibir solicitudes;
+- cifras de ejemplo (ganancias de hoy y de la semana, calificación);
+- una **solicitud nueva** con servicio, dónde, cuándo y pago estimado, que se puede **Aceptar** o **Rechazar**;
+- las **citas agendadas** de la semana.
+
+Todo es de ejemplo: no hay conexión entre la vista del técnico y la del cliente.
 
 ## Ubicaciones, mensajes y llamadas
 

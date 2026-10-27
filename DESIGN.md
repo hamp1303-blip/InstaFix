@@ -43,6 +43,12 @@ El naranja nunca es decoración: si no es una acción, una selección o la ruta,
 - Todos dibujados en SVG con trazo de 2 px. Nada de emojis ni caracteres (★, ✓, 🚨) haciendo de ícono.
 - Íconos disponibles en `index.html`: atrás, flecha, teléfono, chat, estrella, verificado, check, escudo, alerta, ubicación, ojo.
 
+## Selectores de fecha y hora
+
+- Las dos opciones de «¿Cuándo?» son tarjetas con borde; la elegida lleva borde naranja y fondo naranja suave, igual que los chips.
+- Día y hora usan la misma regla: opción libre = borde gris, elegida = naranja, no disponible = atenuada (los días sin atención) o tachada (horas ocupadas). Nunca se esconde una opción: se muestra apagada para que se entienda por qué no está.
+- El interruptor de disponibilidad del técnico usa verde cuando está activo (estado, no acción).
+
 ## Estados
 
 Cada control tiene: normal, hover, foco visible (contorno naranja), presionado, deshabilitado y, donde aplica, cargando («Entrando…», «Creando cuenta…») y error (borde rojo y mensaje que dice qué falta).

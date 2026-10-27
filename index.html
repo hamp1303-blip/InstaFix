@@ -74,6 +74,7 @@
     overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--borde-fuerte) transparent;
     padding: 16px 20px 24px;
   }
+  .screen > * { flex-shrink: 0; }
   .screen.activa { display: flex; animation: entrar .22s var(--salida); }
   @keyframes entrar { from { transform: translateX(10px); } to { transform: none; } }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
@@ -126,8 +127,10 @@
   .app-icono svg { width: 84%; height: 84%; }
 
   /* Inicio de sesión (primera pantalla) */
-  #s-bienvenida, #s-registro { padding: 0; }
+  #s-rol, #s-bienvenida, #s-registro { padding: 0; }
   .marca { background: var(--tinta); color: var(--superficie); padding: 32px 24px 64px; }
+  .marca .atras { background: rgba(255, 255, 255, .12); border-color: transparent; color: #FFFFFF; margin: -12px 0 14px -8px; }
+  .marca .atras:hover { background: rgba(255, 255, 255, .2); }
   .marca .app-icono { width: 56px; height: 56px; margin-bottom: 18px; }
   .marca .wordmark { font-size: 38px; }
   .marca .eslogan { font-size: 16px; margin-top: 10px; color: #C9D0DE; }
@@ -254,7 +257,7 @@
   .fila { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-size: 15px; }
   .fila + .fila { border-top: 1px solid var(--borde); }
   .fila span { color: var(--gris); }
-  .fila b { text-align: right; font-weight: 600; }
+  .fila b { text-align: right; font-weight: 600; text-wrap: balance; }
   .fila small { display: block; font-weight: 400; color: var(--gris); font-size: 13px; }
   .garantia-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--verde); background: var(--verde-claro); padding: 12px 14px; border-radius: var(--radio-control); }
   .garantia-chip svg { width: 20px; height: 20px; flex: none; }
@@ -292,6 +295,58 @@
   .opcion input { width: 20px; height: 20px; accent-color: var(--tinta); }
   .opcion:has(input:checked) { border-color: var(--naranja); background: var(--naranja-suave); }
   .recibido { display: none; }
+
+  /* Rol (cliente o técnico) */
+  .acceso .oficios { margin-bottom: 0; }
+  .acceso h2 + .sub { margin: -12px 0 18px; }
+  .solo-tecnico { display: none; }
+  #app[data-perfil="tecnico"] .solo-tecnico { display: block; }
+
+  /* Cuándo: ahora o cita agendada */
+  .modos { display: grid; gap: 10px; }
+  .modo {
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+    padding: 14px 16px; border-radius: var(--radio); border: 1.5px solid var(--borde); background: var(--superficie);
+    font-size: 16px; font-weight: 600; transition: border-color .15s, background .15s;
+  }
+  .modo:hover { border-color: var(--borde-fuerte); }
+  .modo.sel { border-color: var(--naranja); background: var(--naranja-suave); }
+  .modo .icono { width: 44px; height: 44px; border-radius: 12px; background: var(--tinta); color: var(--naranja); display: grid; place-items: center; flex: none; }
+  .modo .icono svg { width: 24px; height: 24px; }
+  .modo small { display: block; font-size: 14px; font-weight: 400; color: var(--gris); }
+  .dias { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .dia {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    min-height: 64px; border-radius: var(--radio-control); border: 1.5px solid var(--borde-fuerte); background: var(--superficie);
+    transition: border-color .15s, background .15s;
+  }
+  .dia small { font-size: 12px; color: var(--gris); }
+  .dia b { font-size: 18px; font-weight: 600; }
+  .dia:hover:not(:disabled) { border-color: var(--tinta); }
+  .dia.sel, .hora.sel { border-color: var(--naranja); background: var(--naranja-suave); }
+  .dia:disabled, .hora:disabled { opacity: .45; cursor: not-allowed; }
+  .horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .hora {
+    min-height: 44px; border-radius: var(--radio-control); border: 1.5px solid var(--borde-fuerte); background: var(--superficie);
+    font-size: 14px; font-weight: 500; transition: border-color .15s, background .15s;
+  }
+  .hora:hover:not(:disabled) { border-color: var(--tinta); }
+  .hora:disabled { text-decoration: line-through; }
+  .nota-horas { font-size: 13px; margin-top: 10px; }
+  .linea:empty, .resumen-cita:empty { display: none; }
+  .garantia-chip + .linea { margin-top: 12px; }
+  .resumen-cita { text-align: center; font-weight: 600; margin-bottom: 10px; }
+  .peligro { color: var(--rojo); }
+  .nowrap { white-space: nowrap; }
+
+  /* Lado del técnico */
+  .interruptor-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; margin-bottom: 14px; background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); }
+  .interruptor-fila b { display: block; font-size: 16px; font-weight: 600; }
+  .interruptor-fila small { font-size: 14px; color: var(--gris); }
+  .interruptor { width: 52px; height: 32px; border-radius: 999px; background: var(--borde-fuerte); position: relative; flex: none; transition: background .15s; }
+  .interruptor span { position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%; background: #FFFFFF; transition: transform .15s; }
+  .interruptor[aria-checked="true"] { background: var(--verde); }
+  .interruptor[aria-checked="true"] span { transform: translateX(20px); }
 
   /* Chat con el técnico */
   #s-chat { padding: 0; }
@@ -379,17 +434,49 @@
     <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.5l9.5 16.5h-19z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.3v.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
     <symbol id="i-ubicacion" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-casa" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-5.5h4V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-herramienta" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-rayo" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </svg>
 
-  <!-- 1. Inicio de sesión (primera pantalla: no tiene a dónde volver) -->
-  <section class="screen activa" id="s-bienvenida">
+  <!-- 0. Elegir cómo se usa la app (primera pantalla: no tiene a dónde volver) -->
+  <section class="screen activa" id="s-rol">
     <div class="marca">
       <div class="app-icono"><svg><use href="#i-marca"/></svg></div>
       <h1 class="wordmark">Insta<span>Fix</span></h1>
       <p class="eslogan">Llega, cobra lo justo, responde.</p>
     </div>
+    <div class="acceso">
+      <h2>¿Cómo vas a usar InstaFix?</h2>
+      <p class="sub">Elige una opción para empezar.</p>
+      <div class="oficios">
+        <button class="oficio" data-rol="cliente">
+          <span class="icono"><svg><use href="#i-casa"/></svg></span>
+          <span>Necesito un técnico<small>Pide plomería, electricidad o aire</small></span>
+          <svg class="chevron"><use href="#i-chevron"/></svg>
+        </button>
+        <button class="oficio" data-rol="tecnico">
+          <span class="icono"><svg><use href="#i-herramienta"/></svg></span>
+          <span>Soy técnico<small>Ofrece tus servicios y recibe trabajos</small></span>
+          <svg class="chevron"><use href="#i-chevron"/></svg>
+        </button>
+      </div>
+    </div>
+    <p class="etiqueta-prototipo">Prototipo con datos de ejemplo. No se guarda ninguna contraseña.</p>
+  </section>
+
+  <!-- 1. Inicio de sesión -->
+  <section class="screen" id="s-bienvenida">
+    <div class="marca">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <div class="app-icono"><svg><use href="#i-marca"/></svg></div>
+      <h1 class="wordmark">Insta<span>Fix</span></h1>
+      <p class="eslogan">Llega, cobra lo justo, responde.</p>
+    </div>
     <form class="acceso" id="form-login" novalidate>
-      <h2>Iniciar sesión</h2>
+      <h2 data-texto="login-titulo">Iniciar sesión</h2>
+      <p class="sub solo-tecnico">Recibe solicitudes de hogares cerca de ti.</p>
       <label class="campo"><span>Correo o teléfono</span>
         <input id="login-usuario" type="text" autocomplete="username" placeholder="correo@ejemplo.com">
       </label>
@@ -406,8 +493,8 @@
         <button type="button" class="enlace" data-accion="olvide">¿Olvidaste tu contraseña?</button>
       </div>
       <p class="separador">¿No tienes cuenta?</p>
-      <button type="button" class="boton contorno" data-ir="s-registro">Crear cuenta</button>
-      <button type="button" class="enlace invitado" data-accion="invitado">Entrar como invitado</button>
+      <button type="button" class="boton contorno" data-ir="s-registro" data-texto="login-crear">Crear cuenta</button>
+      <button type="button" class="enlace invitado" data-accion="invitado" data-texto="invitado-texto">Entrar como invitado</button>
     </form>
     <p class="etiqueta-prototipo">Prototipo con datos de ejemplo. No se guarda ninguna contraseña.</p>
   </section>
@@ -417,10 +504,10 @@
     <div class="contenido">
       <div class="barra">
         <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-        <span class="paso">Crear cuenta</span>
+        <span class="paso" data-texto="reg-paso">Crear cuenta</span>
       </div>
-      <h2>Crea tu cuenta</h2>
-      <p class="sub">Solo te toma un minuto. Así el técnico sabe a dónde llegar.</p>
+      <h2 data-texto="reg-titulo">Crea tu cuenta</h2>
+      <p class="sub" data-texto="reg-sub">Solo te toma un minuto. Así el técnico sabe a dónde llegar.</p>
       <form class="acceso" id="form-registro" novalidate>
         <label class="campo"><span>Nombre completo</span><input id="reg-nombre" type="text" autocomplete="name" placeholder="María Pérez"></label>
         <label class="campo"><span>Teléfono</span><input id="reg-telefono" type="tel" autocomplete="tel" placeholder="6000-0000"></label>
@@ -431,9 +518,13 @@
             <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg><use href="#i-ojo"/></svg></button>
           </span>
         </label>
-        <label class="campo"><span>Barrio en Ciudad de Panamá</span><select id="reg-barrio"></select></label>
+        <label class="campo solo-tecnico"><span>¿Qué servicio ofreces?</span>
+          <select id="reg-oficio"><option>Plomería</option><option>Electricidad</option><option selected>Aire acondicionado</option></select>
+        </label>
+        <label class="campo"><span data-texto="reg-barrio-label">Barrio en Ciudad de Panamá</span><select id="reg-barrio"></select></label>
         <p class="error" id="registro-error" role="alert"></p>
-        <button type="submit" class="boton" id="boton-registro">Crear cuenta</button>
+        <button type="submit" class="boton" id="boton-registro" data-texto="reg-boton">Crear cuenta</button>
+        <p class="legal solo-tecnico">Antes de recibir trabajos verificaremos tu cédula, tu foto y tus referencias.</p>
         <p class="legal">Prototipo: los datos no se guardan ni se envían.</p>
       </form>
     </div>
@@ -550,6 +641,37 @@
     <div class="abajo"><button class="boton" data-accion="elegir" data-texto="elegir"></button></div>
   </section>
 
+  <!-- 7b. Cuándo: ahora o cita agendada -->
+  <section class="screen" id="s-cuando">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Fecha y hora</span>
+    </div>
+    <h2>¿Cuándo lo necesitas?</h2>
+    <p class="sub" data-texto="cuando-sub"></p>
+    <div class="modos" role="radiogroup" aria-label="Cuándo">
+      <button class="modo sel" role="radio" aria-checked="true" data-modo="ahora">
+        <span class="icono"><svg><use href="#i-rayo"/></svg></span>
+        <span>Lo antes posible<small data-texto="ahora-detalle"></small></span>
+      </button>
+      <button class="modo" role="radio" aria-checked="false" data-modo="agendada">
+        <span class="icono"><svg><use href="#i-calendario"/></svg></span>
+        <span>Agendar una cita<small>Elige el día y la hora</small></span>
+      </button>
+    </div>
+    <div id="agenda" style="display:none">
+      <p class="seccion">Día</p>
+      <div class="dias" id="dias"></div>
+      <p class="seccion">Hora</p>
+      <div class="horas num" id="horas"></div>
+      <p class="linea nota-horas">Las horas tachadas ya están ocupadas. Puedes reprogramar o cancelar gratis hasta 2 horas antes.</p>
+    </div>
+    <div class="abajo">
+      <p class="resumen-cita" data-texto="cita-resumen"></p>
+      <button class="boton" id="boton-cuando" data-accion="continuar-cuando">Continuar</button>
+    </div>
+  </section>
+
   <!-- 8. Confirmación -->
   <section class="screen" id="s-confirmacion">
     <div class="barra">
@@ -559,8 +681,9 @@
     <p class="sub">Revisa antes de pedir. Pagas al terminar.</p>
     <div class="filas" id="confirmacion-filas"></div>
     <div class="garantia-chip"><svg><use href="#i-escudo"/></svg>Incluye garantía de 15 días</div>
+    <p class="linea" data-texto="politica"></p>
     <div class="abajo">
-      <button class="boton" data-accion="confirmar">Confirmar</button>
+      <button class="boton" data-accion="confirmar" data-texto="confirmar-texto">Confirmar</button>
       <button class="boton secundario" data-accion="cambiar">Cambiar técnico</button>
     </div>
   </section>
@@ -644,6 +767,54 @@
     </div>
   </section>
 
+  <!-- 9b. Cita agendada -->
+  <section class="screen" id="s-cita">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Cita agendada</span>
+    </div>
+    <div class="exito">
+      <div class="circulo"><svg><use href="#i-calendario"/></svg></div>
+      <h2>¡Tu cita quedó agendada!</h2>
+      <p class="sub" data-texto="cita-sub"></p>
+    </div>
+    <div class="filas num" id="cita-filas"></div>
+    <div class="caja"><svg><use href="#i-escudo"/></svg><div><strong>Recordatorio y cambios</strong>Te avisamos 1 hora antes. Puedes reprogramar o cancelar gratis hasta 2 horas antes.</div></div>
+    <div class="acciones">
+      <button class="boton secundario" data-ir="s-llamada"><svg><use href="#i-tel"/></svg>Llamar</button>
+      <button class="boton secundario" data-ir="s-chat"><svg><use href="#i-chat"/></svg>Mensaje</button>
+    </div>
+    <div class="abajo">
+      <button class="boton" data-accion="ver-dia">Simular el día de la cita</button>
+      <button class="boton secundario" data-accion="reprogramar">Reprogramar</button>
+      <button class="boton secundario peligro" data-accion="cancelar-cita">Cancelar cita</button>
+    </div>
+  </section>
+
+  <!-- Lado del técnico -->
+  <section class="screen" id="s-tecnico">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso" data-texto="saludo-tec">Hola</span>
+    </div>
+    <h2>Tus trabajos</h2>
+    <p class="sub">Conéctate para recibir solicitudes cerca de ti.</p>
+    <div class="interruptor-fila">
+      <span><b data-texto="disp-titulo"></b><small data-texto="disp-detalle"></small></span>
+      <button class="interruptor" role="switch" aria-checked="true" aria-label="Disponible para recibir solicitudes" data-accion="disponible"><span></span></button>
+    </div>
+    <div class="hechos num">
+      <div class="hecho"><b>$110</b><span>hoy</span></div>
+      <div class="hecho"><b>$420</b><span>esta semana</span></div>
+      <div class="hecho"><b><svg class="estrella on"><use href="#i-estrella"/></svg>4,8</b><span>calificación</span></div>
+    </div>
+    <div id="tec-solicitud"></div>
+    <p class="seccion">Citas agendadas</p>
+    <div class="filas num" id="tec-citas"></div>
+    <p class="legal">Prototipo: cifras y solicitudes de ejemplo.</p>
+    <div class="abajo"><button class="boton secundario" data-accion="reiniciar">Cerrar sesión</button></div>
+  </section>
+
   <!-- Chat con el técnico -->
   <section class="screen" id="s-chat">
     <div class="chat-cabeza">
@@ -708,7 +879,7 @@
       id: 'carlos', nombre: 'Carlos Méndez', iniciales: 'CM', color: '#13213C', base: 'El Cangrejo',
       zona: 'El Cangrejo, Bella Vista y Obarrio', estrellas: '4,8', resenas: 126, servicios: 140,
       puntualidad: '96 %', precio: '$45 – $70', total: '$55', anios: 8, marcas: 'LG, Samsung, Marca X',
-      horario: 'Lun–Sáb, 7:00–18:00', vehiculo: 'Moto gris', fuerte: 'Muy puntual',
+      horario: 'Lun–Sáb, 7:00–18:00', dias: [1, 2, 3, 4, 5, 6], desde: 7, hasta: 18, vehiculo: 'Moto gris', fuerte: 'Muy puntual',
       verificacion: 'cédula, foto y 3 referencias',
       opiniones: [
         [5, 'Llegó a la hora que dijo la app y el aire quedó enfriando el mismo día.', 'María P., Bella Vista'],
@@ -720,7 +891,7 @@
       id: 'ana', nombre: 'Ana Rodríguez', iniciales: 'AR', color: '#17784A', base: 'San Francisco',
       zona: 'San Francisco, Punta Paitilla y Costa del Este', estrellas: '4,9', resenas: 212, servicios: 230,
       puntualidad: '98 %', precio: '$50 – $80', total: '$65', anios: 12, marcas: 'Carrier, Daikin, Marca X',
-      horario: 'Lun–Vie, 8:00–17:00', vehiculo: 'Carro blanco', fuerte: 'Mejor calificada',
+      horario: 'Lun–Vie, 8:00–17:00', dias: [1, 2, 3, 4, 5], desde: 8, hasta: 17, vehiculo: 'Carro blanco', fuerte: 'Mejor calificada',
       verificacion: 'cédula, foto, 4 referencias y certificado técnico',
       opiniones: [
         [5, 'Conoce la marca a fondo; encontró la falla en diez minutos.', 'Roberto S., Costa del Este'],
@@ -732,7 +903,7 @@
       id: 'luis', nombre: 'Luis Herrera', iniciales: 'LH', color: '#A9520A', base: 'Betania',
       zona: 'Betania, El Dorado y Condado del Rey', estrellas: '4,6', resenas: 58, servicios: 64,
       puntualidad: '91 %', precio: '$40 – $60', total: '$48', anios: 4, marcas: 'Midea, Marca X',
-      horario: 'Lun–Dom, 8:00–20:00', vehiculo: 'Moto roja', fuerte: 'Precio más bajo',
+      horario: 'Lun–Dom, 8:00–20:00', dias: [0, 1, 2, 3, 4, 5, 6], desde: 8, hasta: 20, vehiculo: 'Moto roja', fuerte: 'Precio más bajo',
       verificacion: 'cédula, foto y 2 referencias',
       opiniones: [
         [5, 'El más económico y resolvió rápido.', 'Sofía G., El Dorado'],
@@ -741,8 +912,16 @@
     }
   ];
 
-  const INICIAL = { oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista' };
-  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '' };
+  // Solicitud y citas de ejemplo que ve el técnico, según el servicio que ofrece
+  const DEMO_TEC = {
+    'Plomería': { solicitud: 'Reparación de tubería', citas: [[9, 'Cambio de llave de lavamanos', 'Obarrio'], [14, 'Revisión de bomba de agua', 'El Cangrejo']] },
+    'Electricidad': { solicitud: 'Reparación de tablero eléctrico', citas: [[9, 'Cambio de tomacorrientes', 'Obarrio'], [14, 'Revisión de cableado', 'El Cangrejo']] },
+    'Aire acondicionado': { solicitud: 'Reparación de aire split', citas: [[9, 'Mantenimiento de aire de ventana', 'Obarrio'], [14, 'Instalación de aire split', 'El Cangrejo']] }
+  };
+
+  const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', modo: 'ahora', fecha: null, hora: null };
+  const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
+  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() };
   const historial = [];
   let temporizador = null;  // avance automático del seguimiento
   let reloj = null;         // cronómetro de la llamada
@@ -766,6 +945,26 @@
   const distancia = t => km(t.base, estado.barrio).toFixed(1).replace('.', ',');
   const ordenados = () => [...TECNICOS].sort((a, b) => minutos(a) - minutos(b));
 
+  // Citas agendadas: los 7 días siguientes y las horas libres de cada técnico
+  const DIAS_CORTOS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const mayus = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const fechaLarga = d => mayus(d.toLocaleDateString('es-PA', { weekday: 'long', day: 'numeric', month: 'long' }));
+  const hora12 = h => h === 12 ? '12:00 p. m.' : h > 12 ? `${h - 12}:00 p. m.` : `${h}:00 a. m.`;
+  const esAgendada = () => estado.modo === 'agendada' && estado.fecha && estado.hora != null;
+  const proximosDias = () => Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return d;
+  });
+  // Cada cita dura unas 2 horas; la última empieza 2 horas antes de que el técnico cierre
+  function horasDe(t, d) {
+    const ahora = new Date();
+    return Array.from({ length: t.hasta - 1 - t.desde }, (_, i) => t.desde + i).map(h => {
+      const pasada = d.toDateString() === ahora.toDateString() && h <= ahora.getHours() + 1;
+      const ocupada = (d.getDate() * 5 + h * 3 + t.id.length) % 4 === 0; // ocupación de ejemplo
+      return { h, libre: !pasada && !ocupada };
+    });
+  }
+  const diaLibre = (t, d) => t.dias.includes(d.getDay()) && horasDe(t, d).some(x => x.libre);
+
   function ir(id, guardar = true) {
     const actual = document.querySelector('.screen.activa');
     if (actual && actual.id === id) return;
@@ -780,7 +979,7 @@
 
   function atras() {
     const anterior = historial.pop();
-    ir(anterior || 's-bienvenida', false);
+    ir(anterior || 's-rol', false);
   }
 
   // Detiene lo que corre en la pantalla que se deja
@@ -912,15 +1111,32 @@
           </div>`).join('')}`;
       texto('elegir', `Elegir a ${nombreCorto(t)}`);
     }
+    if (id === 's-cuando') pintarCuando();
     if (id === 's-confirmacion') {
       const llegada = new Date(Date.now() + minutos(t) * 60000).toLocaleTimeString('es-PA', { hour: 'numeric', minute: '2-digit' });
+      const agendada = esAgendada();
       $('#confirmacion-filas').innerHTML = `
         <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()} – ${estado.marca}</b></div>
         <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
         <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
         <div class="fila num"><span>Precio estimado</span><b>${t.precio}<small>sin repuestos</small></b></div>
-        <div class="fila num"><span>Llega aprox.</span><b>${llegada}</b></div>`;
+        ${agendada
+          ? `<div class="fila num"><span>Cita</span><b>${fechaLarga(estado.fecha)}<small>${hora12(estado.hora)}</small></b></div>`
+          : `<div class="fila num"><span>Llega aprox.</span><b>${llegada}</b></div>`}`;
+      texto('confirmar-texto', agendada ? 'Confirmar cita' : 'Confirmar');
+      texto('politica', agendada ? 'Te avisamos 1 hora antes. Puedes reprogramar o cancelar gratis hasta 2 horas antes.' : '');
     }
+    if (id === 's-cita') {
+      texto('cita-sub', `${nombreCorto(t)} llegará a la hora acordada.`);
+      $('#cita-filas').innerHTML = `
+        <div class="fila"><span>Día</span><b>${fechaLarga(estado.fecha)}</b></div>
+        <div class="fila num"><span>Hora</span><b>${hora12(estado.hora)}</b></div>
+        <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
+        <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
+        <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()}</b></div>
+        <div class="fila num"><span>Precio estimado</span><b>${t.precio}<small>sin repuestos</small></b></div>`;
+    }
+    if (id === 's-tecnico') pintarTecnico();
     if (id === 's-seguimiento') {
       texto('camino', `${nombreCorto(t)} va en camino`);
       texto('ruta', `De ${t.base} a ${estado.barrio} · ${distancia(t)} km`);
@@ -977,6 +1193,84 @@
     }
   }
 
+  // Pantalla "¿Cuándo lo necesitas?": lo antes posible o una cita con día y hora
+  function pintarCuando() {
+    const t = estado.tecnico, agendar = estado.modo === 'agendada';
+    texto('cuando-sub', `${nombreCorto(t)} atiende ${t.horario}.`);
+    texto('ahora-detalle', `Llega en unos ${minutos(t)} min`);
+    document.querySelectorAll('[data-modo]').forEach(b => {
+      const activo = b.dataset.modo === estado.modo;
+      b.classList.toggle('sel', activo); b.setAttribute('aria-checked', activo);
+    });
+    $('#agenda').style.display = agendar ? '' : 'none';
+    if (agendar) {
+      const dias = proximosDias();
+      if (!estado.fecha || !diaLibre(t, estado.fecha)) { estado.fecha = dias.find(d => diaLibre(t, d)) || null; estado.hora = null; }
+      if (estado.fecha && estado.hora != null && !horasDe(t, estado.fecha).some(x => x.h === estado.hora && x.libre)) estado.hora = null;
+      $('#dias').innerHTML = dias.map((d, i) => {
+        const libre = diaLibre(t, d), sel = estado.fecha && d.getTime() === estado.fecha.getTime();
+        return `<button class="dia${sel ? ' sel' : ''}" data-dia="${d.getTime()}" aria-pressed="${!!sel}" aria-label="${fechaLarga(d)}${libre ? '' : ', sin disponibilidad'}"${libre ? '' : ' disabled'}><small>${i === 0 ? 'Hoy' : DIAS_CORTOS[d.getDay()]}</small><b class="num">${d.getDate()}</b></button>`;
+      }).join('');
+      $('#horas').innerHTML = estado.fecha ? horasDe(t, estado.fecha).map(x =>
+        `<button class="hora${x.h === estado.hora ? ' sel' : ''}" data-hora="${x.h}" aria-pressed="${x.h === estado.hora}"${x.libre ? '' : ' disabled'}>${hora12(x.h)}</button>`).join('') : '';
+    }
+    texto('cita-resumen', agendar && estado.hora != null ? `${fechaLarga(estado.fecha)} · ${hora12(estado.hora)}` : '');
+    $('#boton-cuando').disabled = agendar && estado.hora == null;
+  }
+
+  // Pantalla del técnico: disponibilidad, solicitud nueva y citas agendadas
+  function pintarTecnico() {
+    const s = estado.tec, demo = DEMO_TEC[estado.oficioTec];
+    texto('saludo-tec', estado.nombre ? `Hola, ${estado.nombre}` : 'Hola, ¿listo para trabajar?');
+    texto('disp-titulo', s.disponible ? 'Estás disponible' : 'Estás desconectado');
+    texto('disp-detalle', s.disponible ? 'Recibes solicitudes de hogares cercanos.' : 'No recibirás solicitudes hasta que te conectes.');
+    $('.interruptor').setAttribute('aria-checked', s.disponible);
+    const donde = estado.barrio === 'Bella Vista' ? 'Obarrio' : 'Bella Vista';
+    let solicitud = '';
+    if (s.disponible && s.solicitud === 'nueva') solicitud = `
+      <p class="seccion">Solicitud nueva</p>
+      <div class="filas num">
+        <div class="fila"><span>Servicio</span><b>${demo.solicitud}</b></div>
+        <div class="fila"><span>Dónde</span><b>${donde}<small>a ${km(estado.barrio, donde).toFixed(1).replace('.', ',')} km de ti</small></b></div>
+        <div class="fila"><span>Cuándo</span><b>Lo antes posible</b></div>
+        <div class="fila"><span>Pago estimado</span><b>$45 – $70</b></div>
+      </div>
+      <div class="acciones">
+        <button class="boton secundario" data-accion="rechazar">Rechazar</button>
+        <button class="boton" data-accion="aceptar">Aceptar</button>
+      </div>`;
+    else if (s.disponible && s.solicitud === 'aceptada') solicitud = `
+      <p class="seccion">Solicitud nueva</p>
+      <div class="caja">${icono('i-check')}<div><strong>Solicitud aceptada</strong>El cliente ya ve que vas en camino a ${donde}.</div></div>`;
+    else if (s.disponible) solicitud = `
+      <p class="seccion">Solicitud nueva</p>
+      <p class="sub">La rechazaste. Te avisamos cuando llegue otra.</p>`;
+    $('#tec-solicitud').innerHTML = solicitud;
+
+    const fechas = [], d = new Date(); d.setHours(0, 0, 0, 0);
+    while (fechas.length < demo.citas.length) { d.setDate(d.getDate() + 1); if (d.getDay() > 0 && d.getDay() < 6) fechas.push(new Date(d)); }
+    const manana = new Date(); manana.setDate(manana.getDate() + 1);
+    $('#tec-citas').innerHTML = demo.citas.map(([h, servicio, barrio], i) => {
+      const dia = fechas[i].toDateString() === manana.toDateString() ? 'Mañana' : mayus(fechas[i].toLocaleDateString('es-PA', { weekday: 'long' }));
+      return `<div class="fila num"><span class="nowrap">${dia}<br>${hora12(h)}</span><b>${servicio}<small>${barrio}</small></b></div>`;
+    }).join('');
+  }
+
+  // Textos de las pantallas de entrada según el rol elegido
+  function aplicarRol() {
+    const tec = estado.rol === 'tecnico';
+    $('#app').dataset.perfil = estado.rol;
+    texto('login-titulo', tec ? 'Entra como técnico' : 'Iniciar sesión');
+    texto('login-crear', tec ? 'Registrarme como técnico' : 'Crear cuenta');
+    texto('invitado-texto', tec ? 'Ver cómo funciona (demo)' : 'Entrar como invitado');
+    texto('reg-paso', tec ? 'Cuenta de técnico' : 'Crear cuenta');
+    texto('reg-titulo', tec ? 'Ofrece tus servicios' : 'Crea tu cuenta');
+    texto('reg-sub', tec ? 'Verificamos a cada técnico para que los hogares confíen en ti.' : 'Solo te toma un minuto. Así el técnico sabe a dónde llegar.');
+    texto('reg-barrio-label', tec ? 'Barrio desde donde sales' : 'Barrio en Ciudad de Panamá');
+    texto('reg-boton', tec ? 'Crear cuenta de técnico' : 'Crear cuenta');
+  }
+  aplicarRol();
+
   function pintarEstrellas(n) {
     document.querySelectorAll('#calificar button').forEach((b, i) => b.classList.toggle('on', i < n));
   }
@@ -995,11 +1289,12 @@
   } catch (e) { /* sin almacenamiento: no pasa nada */ }
 
   function entrar() {
-    estado.inicio = Date.now(); // el reto de los 60 segundos empieza al entrar
+    const tecnico = estado.rol === 'tecnico';
+    if (!tecnico) estado.inicio = Date.now(); // el reto de los 60 segundos empieza al entrar
     texto('saludo', estado.nombre ? `Hola, ${estado.nombre}` : 'Hola, ¿en qué te ayudamos?');
     $('#barrio').value = estado.barrio;
     document.querySelectorAll('#login-clave, #reg-clave').forEach(i => { i.value = ''; i.type = 'password'; });
-    ir('s-inicio');
+    ir(tecnico ? 's-tecnico' : 's-inicio');
   }
 
   // Marca el campo con error y lo limpia en cuanto la persona vuelve a escribir
@@ -1049,9 +1344,10 @@
     marcarError(error, null, '');
     estado.nombre = nombre.split(/\s+/)[0];
     estado.barrio = $('#reg-barrio').value;
+    if (estado.rol === 'tecnico') estado.oficioTec = $('#reg-oficio').value;
     cargando($('#boton-registro'), 'Creando cuenta…', () => {
       entrar();
-      historial.splice(0, historial.length, 's-bienvenida'); // volver desde Inicio lleva al inicio de sesión, no al registro
+      historial.splice(0, historial.length, 's-rol', 's-bienvenida'); // volver desde Inicio lleva al inicio de sesión, no al registro
       avisar(`¡Hola, ${estado.nombre}! Tu cuenta quedó creada`, 'Prototipo: los datos no se guardan.');
     });
   });
@@ -1068,8 +1364,16 @@
     if (!el || (el.form && el.type === 'submit')) return; // los botones de enviar los maneja su formulario
 
     if (el.dataset.ir) return ir(el.dataset.ir);
+    if (el.dataset.rol) { estado.rol = el.dataset.rol; aplicarRol(); return ir('s-bienvenida'); }
     if (el.dataset.oficio) { estado.oficio = el.dataset.oficio; return ir('s-tipo'); }
-    if (el.dataset.tecnico) { estado.tecnico = TECNICOS.find(x => x.id === el.dataset.tecnico); return ir('s-perfil'); }
+    if (el.dataset.tecnico) {
+      estado.tecnico = TECNICOS.find(x => x.id === el.dataset.tecnico);
+      estado.fecha = null; estado.hora = null; // la agenda es de cada técnico
+      return ir('s-perfil');
+    }
+    if (el.dataset.modo) { estado.modo = el.dataset.modo; return pintarCuando(); }
+    if (el.dataset.dia) { estado.fecha = new Date(+el.dataset.dia); estado.hora = null; return pintarCuando(); }
+    if (el.dataset.hora) { estado.hora = +el.dataset.hora; return pintarCuando(); }
     if (el.hasAttribute('data-rapida')) return enviar(el.textContent);
     if (el.dataset.control) return el.classList.toggle('on');
 
@@ -1106,7 +1410,34 @@
       case 'colgar':
         return atras();
       case 'elegir':
+        // una emergencia no se agenda: va directo a confirmar
+        if (estado.tipo === 'Emergencia') { estado.modo = 'ahora'; return ir('s-confirmacion'); }
+        return ir('s-cuando');
+      case 'continuar-cuando':
         return ir('s-confirmacion');
+      case 'reprogramar': {
+        const i = historial.lastIndexOf('s-cuando');
+        if (i >= 0) historial.splice(i);
+        return ir('s-cuando', false);
+      }
+      case 'cancelar-cita': {
+        const i = historial.lastIndexOf('s-inicio');
+        if (i >= 0) historial.splice(i);
+        Object.assign(estado, { modo: 'ahora', fecha: null, hora: null });
+        avisar('Cita cancelada', 'Sin costo: faltaban más de 2 horas.');
+        return ir('s-inicio', false);
+      }
+      case 'ver-dia':
+        return ir('s-seguimiento');
+      case 'disponible':
+        estado.tec.disponible = !estado.tec.disponible;
+        return pintarTecnico();
+      case 'aceptar':
+        estado.tec.solicitud = 'aceptada';
+        return pintarTecnico();
+      case 'rechazar':
+        estado.tec.solicitud = 'rechazada';
+        return pintarTecnico();
       case 'cambiar':
         historial.splice(historial.lastIndexOf('s-lista'));
         return ir('s-lista', false);
@@ -1116,7 +1447,7 @@
           avisar(`Pediste un técnico en ${s} s`, s <= 60 ? '¡Reto de los 60 segundos superado!' : 'Inténtalo otra vez en menos de 60 s');
           estado.inicio = null;
         }
-        return ir('s-seguimiento');
+        return ir(esAgendada() ? 's-cita' : 's-seguimiento');
       }
       case 'pagar':
         return ir('s-garantia');
@@ -1129,11 +1460,12 @@
       case 'reiniciar':
         historial.length = 0;
         document.querySelectorAll('.chip.sel').forEach(c => c.classList.remove('sel'));
-        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '' });
+        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() });
         $('#barrio').value = estado.barrio;
         document.querySelectorAll('.error').forEach(p => { p.textContent = ''; });
         $('#form-registro').reset();
-        return ir('s-bienvenida', false);
+        aplicarRol();
+        return ir('s-rol', false);
     }
   });
 </script>
