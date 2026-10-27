@@ -12,7 +12,7 @@ Prototipo navegable de la app **InstaFix** ("Llega, cobra lo justo, responde."),
 
 ## Recorrido de la demo (reto de los 60 segundos)
 
-1. Bienvenida → **Empezar** (aquí arranca el cronómetro)
+1. Inicio de sesión → escribir cualquier correo y contraseña y tocar **Iniciar sesión**, o tocar **Entrar como invitado** (aquí arranca el cronómetro). También están **Regístrate ahora**, **Recordarme** y **¿Olvidaste tu contraseña?**; todo es simulado y la contraseña nunca se guarda
 2. Inicio → elegir el barrio en **Tu ubicación** (Bella Vista por defecto) → **Aire acondicionado**
 3. Tipo de servicio → **Reparación**
 4. Aparato → **Aire split**

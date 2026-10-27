@@ -87,15 +87,51 @@
   .acciones .boton.secundario { margin-top: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .acciones svg { width: 20px; height: 20px; }
 
-  /* Bienvenida */
-  #s-bienvenida { background: var(--azul); color: var(--blanco); text-align: center; justify-content: center; }
-  #s-bienvenida .logo { width: 120px; height: 120px; margin: 0 auto 20px; }
-  #s-bienvenida h1 { font-size: 32px; }
-  #s-bienvenida .eslogan { font-size: 18px; margin: 10px 0 28px; opacity: .9; }
-  .etiqueta-prototipo {
-    display: inline-block; margin: 0 auto 32px; padding: 4px 12px; border-radius: 99px;
-    border: 1px solid rgba(255,255,255,.4); font-size: 12px; opacity: .85;
+  /* Inicio de sesión (primera pantalla) */
+  #s-bienvenida { padding: 0; }
+  .marca { background: var(--azul); color: var(--blanco); text-align: center; padding: 28px 20px 60px; border-radius: 0 0 32px 32px; }
+  .marca .logo { width: 72px; height: 72px; margin: 0 auto 8px; display: block; }
+  .marca h1 { font-size: 30px; }
+  .marca .eslogan { font-size: 15px; margin-top: 4px; opacity: .9; }
+  .acceso {
+    margin: -36px 20px 0; padding: 0 20px 20px; text-align: center;
+    background: var(--blanco); border-radius: 24px; box-shadow: 0 10px 30px rgba(11, 37, 69, .12);
   }
+  .icono-usuario {
+    width: 60px; height: 60px; margin: 0 auto 6px; transform: translateY(-24px);
+    border-radius: 50%; border: 2px solid var(--azul); background: var(--blanco);
+    display: grid; place-items: center; color: var(--azul);
+  }
+  .icono-usuario svg { width: 30px; height: 30px; }
+  .acceso h2 { margin: -18px 0 14px; color: var(--azul); }
+  .campo { display: block; margin-bottom: 12px; }
+  .campo > span:first-child { display: block; font-size: 14px; font-weight: 600; color: var(--gris); margin-bottom: 6px; }
+  .con-ojo { display: block; }
+  .campo input, .campo select {
+    width: 100%; padding: 13px 18px; border-radius: 99px; border: 2px solid var(--borde);
+    background: var(--blanco); font-size: 16px; outline: none;
+  }
+  .campo input:focus, .campo select:focus { border-color: var(--naranja); }
+  .con-ojo { position: relative; }
+  .con-ojo input { padding-right: 52px; }
+  .ojo { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; display: grid; place-items: center; color: var(--gris); }
+  .ojo svg { width: 20px; height: 20px; }
+  .error { color: var(--rojo); font-size: 13px; font-weight: 700; min-height: 18px; margin: -4px 0 8px; }
+  .acceso .boton { border-radius: 99px; }
+  .fila-opciones { display: flex; justify-content: space-between; align-items: center; margin: 12px 2px 18px; font-size: 13px; }
+  .recordar { display: flex; align-items: center; gap: 6px; color: var(--azul); cursor: pointer; }
+  .recordar input { width: 16px; height: 16px; accent-color: var(--azul); }
+  .enlace { color: var(--azul); font-size: 13px; font-weight: 700; text-decoration: underline; }
+  .sin-cuenta { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--azul); margin-bottom: 8px; }
+  .boton.registro { width: auto; padding: 11px 32px; font-size: 15px; background: var(--azul); color: var(--blanco); }
+  .invitado { display: block; margin: 14px auto 0; color: var(--gris); }
+  .etiqueta-prototipo {
+    display: block; width: fit-content; margin: 16px auto 20px; padding: 4px 12px; border-radius: 99px;
+    border: 1px solid var(--borde); font-size: 11px; color: var(--gris);
+  }
+  #s-registro .acceso { margin: 0; padding: 0; box-shadow: none; text-align: left; }
+  #s-registro .campo > span:first-child { padding-left: 14px; }
+  .legal { font-size: 12px; color: var(--gris); text-align: center; margin-top: 10px; }
 
   /* Inicio */
   .ubicacion {
@@ -262,8 +298,9 @@
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   </svg>
 
-  <!-- 1. Bienvenida (primera pantalla: no tiene a dónde volver) -->
+  <!-- 1. Inicio de sesión (primera pantalla: no tiene a dónde volver) -->
   <section class="screen activa" id="s-bienvenida">
+    <div class="marca">
     <svg class="logo" viewBox="0 0 120 120" aria-hidden="true">
       <circle cx="60" cy="60" r="52" fill="none" stroke="#FFFFFF" stroke-width="8"/>
       <g stroke="#FFFFFF" stroke-width="4" stroke-linecap="round">
@@ -281,15 +318,62 @@
     </svg>
     <h1>InstaFix</h1>
     <p class="eslogan">Llega, cobra lo justo, responde.</p>
-    <span class="etiqueta-prototipo">Prototipo – datos de ejemplo</span>
-    <button class="boton" data-accion="empezar">Empezar</button>
+    </div>
+    <form class="acceso" id="form-login" novalidate>
+      <div class="icono-usuario"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div>
+      <h2>Iniciar sesión</h2>
+      <label class="campo"><span>Correo o teléfono</span>
+        <input id="login-usuario" type="text" autocomplete="username" placeholder="correo@ejemplo.com">
+      </label>
+      <label class="campo"><span>Contraseña</span>
+        <span class="con-ojo">
+          <input id="login-clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
+          <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </span>
+      </label>
+      <p class="error" id="login-error" role="alert"></p>
+      <button type="submit" class="boton">Iniciar sesión</button>
+      <div class="fila-opciones">
+        <label class="recordar"><input type="checkbox" id="recordar"> Recordarme</label>
+        <button type="button" class="enlace" data-accion="olvide">¿Olvidaste tu contraseña?</button>
+      </div>
+      <p class="sin-cuenta">¿No tienes cuenta?</p>
+      <button type="button" class="boton registro" data-ir="s-registro">Regístrate ahora</button>
+      <button type="button" class="enlace invitado" data-accion="invitado">Entrar como invitado</button>
+    </form>
+    <span class="etiqueta-prototipo">Prototipo – datos de ejemplo · no se guarda ninguna contraseña</span>
+  </section>
+
+  <!-- 1b. Registro -->
+  <section class="screen" id="s-registro">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Crear cuenta</span>
+    </div>
+    <h2>Crea tu cuenta</h2>
+    <p class="sub">Solo te toma un minuto. Así el técnico sabe a dónde llegar.</p>
+    <form class="acceso" id="form-registro" novalidate>
+      <label class="campo"><span>Nombre completo</span><input id="reg-nombre" type="text" autocomplete="name" placeholder="María Pérez"></label>
+      <label class="campo"><span>Teléfono</span><input id="reg-telefono" type="tel" autocomplete="tel" placeholder="6000-0000"></label>
+      <label class="campo"><span>Correo</span><input id="reg-correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com"></label>
+      <label class="campo"><span>Contraseña</span>
+        <span class="con-ojo">
+          <input id="reg-clave" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+          <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </span>
+      </label>
+      <label class="campo"><span>Barrio · Ciudad de Panamá</span><select id="reg-barrio"></select></label>
+      <p class="error" id="registro-error" role="alert"></p>
+      <button type="submit" class="boton">Crear cuenta</button>
+      <p class="legal">Prototipo: los datos no se guardan ni se envían.</p>
+    </form>
   </section>
 
   <!-- 2. Inicio -->
   <section class="screen" id="s-inicio">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <span class="paso">Hola, ¿en qué te ayudamos?</span>
+      <span class="paso" data-texto="saludo">Hola, ¿en qué te ayudamos?</span>
     </div>
     <label class="ubicacion">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
@@ -585,7 +669,7 @@
   ];
 
   const INICIAL = { oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista' };
-  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {} };
+  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '' };
   const historial = [];
   let temporizador = null;  // avance automático del seguimiento
   let reloj = null;         // cronómetro de la llamada
@@ -810,6 +894,55 @@
   // Lista de barrios para elegir la ubicación
   $('#barrio').innerHTML = Object.keys(BARRIOS).map(b => `<option${b === estado.barrio ? ' selected' : ''}>${b}</option>`).join('');
   $('#barrio').addEventListener('change', e => { estado.barrio = e.target.value; });
+  $('#reg-barrio').innerHTML = $('#barrio').innerHTML;
+
+  // Inicio de sesión simulado: cualquier dato sirve y la contraseña nunca se guarda
+  const limpio = s => s.replace(/[<>&"]/g, '').trim();
+  const RECORDAR = 'instafix-usuario';
+  try {
+    const guardado = localStorage.getItem(RECORDAR);
+    if (guardado) { $('#login-usuario').value = guardado; $('#recordar').checked = true; }
+  } catch (e) { /* sin almacenamiento: no pasa nada */ }
+
+  function entrar() {
+    estado.inicio = Date.now(); // el reto de los 60 segundos empieza al entrar
+    texto('saludo', estado.nombre ? `Hola, ${estado.nombre} 👋` : 'Hola, ¿en qué te ayudamos?');
+    $('#barrio').value = estado.barrio;
+    document.querySelectorAll('#login-clave, #reg-clave').forEach(i => { i.value = ''; i.type = 'password'; });
+    ir('s-inicio');
+  }
+
+  $('#form-login').addEventListener('submit', e => {
+    e.preventDefault();
+    const usuario = limpio($('#login-usuario').value), clave = $('#login-clave').value;
+    const error = !usuario ? 'Escribe tu correo o teléfono.' : !clave ? 'Escribe tu contraseña.' : '';
+    $('#login-error').textContent = error;
+    if (error) return;
+    try {
+      if ($('#recordar').checked) localStorage.setItem(RECORDAR, usuario);
+      else localStorage.removeItem(RECORDAR);
+    } catch (e) { /* sin almacenamiento */ }
+    const base = usuario.includes('@') ? usuario.split('@')[0].split(/[._-]/)[0] : '';
+    estado.nombre = /^\d*$/.test(base) ? '' : base.charAt(0).toUpperCase() + base.slice(1).toLowerCase();
+    entrar();
+  });
+
+  $('#form-registro').addEventListener('submit', e => {
+    e.preventDefault();
+    const nombre = limpio($('#reg-nombre').value), telefono = limpio($('#reg-telefono').value);
+    const correo = limpio($('#reg-correo').value), clave = $('#reg-clave').value;
+    const error = !nombre ? 'Escribe tu nombre.'
+      : !telefono && !correo ? 'Escribe tu teléfono o tu correo.'
+      : correo && !/^\S+@\S+\.\S+$/.test(correo) ? 'Revisa el correo: falta algo.'
+      : clave.length < 6 ? 'La contraseña debe tener al menos 6 caracteres.' : '';
+    $('#registro-error').textContent = error;
+    if (error) return;
+    estado.nombre = nombre.split(/\s+/)[0];
+    estado.barrio = $('#reg-barrio').value;
+    entrar();
+    historial.splice(0, historial.length, 's-bienvenida'); // volver desde Inicio lleva al inicio de sesión, no al registro
+    avisar(`¡Hola, ${estado.nombre}! Tu cuenta quedó creada`, 'Prototipo: los datos no se guardan.');
+  });
 
   $('#form-chat').addEventListener('submit', e => {
     e.preventDefault();
@@ -820,7 +953,7 @@
   // Un solo manejador para todos los toques
   document.addEventListener('click', e => {
     const el = e.target.closest('button, [data-tecnico]');
-    if (!el || el.form) return; // el botón de enviar del chat lo maneja el formulario
+    if (!el || (el.form && el.type === 'submit')) return; // los botones de enviar los maneja su formulario
 
     if (el.dataset.ir) return ir(el.dataset.ir);
     if (el.dataset.oficio) { estado.oficio = el.dataset.oficio; return ir('s-tipo'); }
@@ -842,9 +975,18 @@
     }
 
     switch (el.dataset.accion) {
-      case 'empezar':
-        estado.inicio = Date.now();
-        return ir('s-inicio');
+      case 'invitado':
+        estado.nombre = '';
+        $('#login-error').textContent = '';
+        return entrar();
+      case 'olvide':
+        return avisar('Te enviamos un enlace para cambiar tu contraseña', 'Simulado: en la app real llegaría por correo o SMS.');
+      case 'ver-clave': {
+        const campo = el.parentElement.querySelector('input');
+        campo.type = campo.type === 'password' ? 'text' : 'password';
+        el.setAttribute('aria-label', campo.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña');
+        return;
+      }
       case 'emergencia':
         estado.tipo = 'Emergencia';
         return ir('s-aparato');
@@ -875,8 +1017,10 @@
       case 'reiniciar':
         historial.length = 0;
         document.querySelectorAll('.chip.sel').forEach(c => c.classList.remove('sel'));
-        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {} });
+        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '' });
         $('#barrio').value = estado.barrio;
+        document.querySelectorAll('.error').forEach(p => { p.textContent = ''; });
+        $('#form-registro').reset();
         return ir('s-bienvenida', false);
     }
   });
