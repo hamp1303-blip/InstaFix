@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B2545">
+<title>Mantenimiento sin Espera</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul: #0B2545;
+    --naranja: #FF6B00;
+    --blanco: #FFFFFF;
+    --tarjeta: #F3F5F8;
+    --gris: #5B6575;
+    --borde: #DDE2E9;
+    --verde: #1E8E4E;
+    --verde-claro: #E3F4EA;
+    --rojo: #D93025;
+    --radio: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
+    color: var(--azul);
+    background: #E9EDF2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button, input, select { font: inherit; color: inherit; }
+  button { background: none; border: 0; cursor: pointer; }
+
+  /* Marco de celular en computadora; pantalla completa en el celular */
+  .device {
+    position: relative;
+    width: 390px;
+    height: min(844px, 100dvh - 32px);
+    background: var(--blanco);
+    border-radius: 36px;
+    box-shadow: 0 0 0 10px #10192B, 0 20px 50px rgba(11, 37, 69, .35);
+    overflow: hidden;
+  }
+  @media (max-width: 500px) {
+    body { display: block; background: var(--blanco); }
+    .device { width: 100%; height: 100dvh; border-radius: 0; box-shadow: none; }
+  }
+
+  .screen {
+    position: absolute;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px 20px 24px;
+  }
+  .screen.activa { display: flex; animation: entrar .25s ease-out; }
+  @keyframes entrar { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+
+  /* Encabezado con botón de volver */
+  .barra { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; min-height: 40px; }
+  .atras {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--tarjeta); display: grid; place-items: center; flex: none;
+  }
+  .atras svg { width: 20px; height: 20px; }
+  .paso { font-size: 14px; color: var(--gris); font-weight: 600; }
+  .progreso { height: 6px; background: var(--tarjeta); border-radius: 3px; flex: 1; overflow: hidden; }
+  .progreso span { display: block; height: 100%; background: var(--naranja); border-radius: 3px; }
+
+  h1 { font-size: 28px; font-weight: 800; line-height: 1.15; }
+  h2 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+  .sub { color: var(--gris); font-size: 15px; margin-bottom: 20px; }
+
+  .boton {
+    width: 100%; padding: 16px; border-radius: 14px;
+    background: var(--naranja); color: var(--azul);
+    font-size: 17px; font-weight: 800; text-align: center;
+  }
+  .boton:active { transform: scale(.98); }
+  .boton.secundario { background: var(--tarjeta); color: var(--azul); font-weight: 700; margin-top: 10px; }
+  .abajo { margin-top: auto; padding-top: 16px; }
+  .acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .acciones .boton.secundario { margin-top: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .acciones svg { width: 20px; height: 20px; }
+
+  /* Bienvenida */
+  #s-bienvenida { background: var(--azul); color: var(--blanco); text-align: center; justify-content: center; }
+  #s-bienvenida .logo { width: 120px; height: 120px; margin: 0 auto 20px; }
+  #s-bienvenida h1 { font-size: 32px; }
+  #s-bienvenida .eslogan { font-size: 18px; margin: 10px 0 28px; opacity: .9; }
+  .etiqueta-prototipo {
+    display: inline-block; margin: 0 auto 32px; padding: 4px 12px; border-radius: 99px;
+    border: 1px solid rgba(255,255,255,.4); font-size: 12px; opacity: .85;
+  }
+
+  /* Inicio */
+  .ubicacion {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 18px;
+    border-radius: 14px; background: var(--tarjeta); font-size: 14px;
+  }
+  .ubicacion svg { width: 20px; height: 20px; flex: none; color: var(--naranja); }
+  .ubicacion small { display: block; color: var(--gris); font-size: 12px; }
+  .ubicacion select { border: 0; background: none; font-weight: 800; font-size: 16px; padding: 0; width: 100%; cursor: pointer; }
+  .oficios { display: grid; gap: 12px; margin-bottom: 16px; }
+  .oficio {
+    display: flex; align-items: center; gap: 14px; text-align: left;
+    padding: 16px; border-radius: var(--radio); background: var(--tarjeta);
+    font-size: 17px; font-weight: 700;
+  }
+  .oficio .icono { width: 48px; height: 48px; border-radius: 12px; background: var(--azul); display: grid; place-items: center; flex: none; }
+  .oficio .icono svg { width: 26px; height: 26px; }
+  .oficio small { display: block; font-size: 13px; font-weight: 400; color: var(--gris); }
+  .emergencia {
+    width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--rojo);
+    color: #B3261E; font-weight: 800; font-size: 16px;
+  }
+
+  /* Chips de filtro */
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    padding: 12px 16px; border-radius: 99px; border: 2px solid var(--borde);
+    font-size: 15px; font-weight: 700; background: var(--blanco);
+  }
+  .chip:active, .chip.sel { border-color: var(--naranja); background: #FFF1E6; }
+
+  /* Lista de técnicos */
+  .resumen { display: inline-block; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 99px; background: var(--tarjeta); margin-bottom: 8px; }
+  .orden { font-size: 13px; color: var(--gris); margin-bottom: 10px; }
+  .tarjeta {
+    display: flex; gap: 12px; width: 100%; text-align: left;
+    padding: 14px; border-radius: var(--radio); border: 1px solid var(--borde); margin-bottom: 12px;
+  }
+  .tarjeta:active { background: var(--tarjeta); }
+  .avatar {
+    width: 56px; height: 56px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; color: var(--blanco); font-weight: 800; font-size: 20px;
+  }
+  .tarjeta .info { flex: 1; min-width: 0; }
+  .nombre { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 6px; }
+  .verif { color: var(--verde); font-size: 12px; font-weight: 700; }
+  .insignia { display: inline-block; font-size: 11px; font-weight: 700; color: var(--azul); background: #FFE3CC; padding: 2px 8px; border-radius: 99px; margin: 4px 0; }
+  .datos { display: flex; justify-content: space-between; font-size: 13px; color: var(--gris); margin-top: 4px; }
+  .datos b { color: var(--azul); }
+  .destaca { font-size: 12px; font-weight: 700; color: var(--naranja); }
+
+  /* Perfil */
+  .perfil-cabeza { text-align: center; margin-bottom: 16px; }
+  .perfil-cabeza .avatar { width: 88px; height: 88px; font-size: 30px; margin: 0 auto 10px; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .stat { background: var(--tarjeta); border-radius: 12px; padding: 10px 6px; text-align: center; }
+  .stat b { display: block; font-size: 17px; }
+  .stat span { font-size: 12px; color: var(--gris); }
+  .caja { background: var(--verde-claro); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
+  .caja strong { color: var(--verde); display: block; margin-bottom: 4px; }
+  .seccion { font-weight: 800; font-size: 16px; margin: 4px 0 8px; }
+  .resena { border-top: 1px solid var(--borde); padding: 10px 0; font-size: 14px; }
+  .resena .estrellas { color: var(--naranja); letter-spacing: 1px; }
+  .resena .quien { color: var(--gris); font-size: 12px; }
+  .completado { font-size: 11px; color: var(--verde); font-weight: 700; }
+  .linea { font-size: 14px; color: var(--gris); margin-bottom: 4px; }
+
+  /* Confirmación */
+  .filas { border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; margin-bottom: 12px; }
+  .fila { display: flex; justify-content: space-between; gap: 12px; padding: 14px; font-size: 15px; }
+  .fila + .fila { border-top: 1px solid var(--borde); }
+  .fila span { color: var(--gris); }
+  .fila b { text-align: right; }
+  .garantia-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--verde); background: var(--verde-claro); padding: 10px 14px; border-radius: 12px; }
+
+  /* Seguimiento */
+  .mapa { border-radius: var(--radio); overflow: hidden; margin-bottom: 16px; background: #EEF2EC; }
+  .mapa svg { display: block; width: 100%; height: auto; }
+  .eta { font-size: 34px; font-weight: 800; }
+  .barra-llegada { height: 8px; background: var(--tarjeta); border-radius: 4px; overflow: hidden; margin: 10px 0 16px; }
+  .barra-llegada span { display: block; height: 100%; width: 0; background: var(--naranja); }
+  .barra-llegada.corre span { animation: llenar 6s linear forwards; }
+  @keyframes llenar { to { width: 100%; } }
+
+  /* Pago y garantía */
+  .exito { text-align: center; margin: 8px 0 20px; }
+  .exito .circulo { width: 72px; height: 72px; border-radius: 50%; background: var(--verde-claro); display: grid; place-items: center; margin: 0 auto 12px; }
+  .calificar { display: flex; justify-content: center; gap: 6px; margin: 8px 0 18px; }
+  .calificar button { font-size: 36px; color: var(--borde); line-height: 1; }
+  .calificar button.on { color: var(--naranja); }
+  .sello {
+    margin: 4px auto 14px; width: 160px; height: 160px; border-radius: 50%;
+    border: 6px double var(--verde); color: var(--verde);
+    display: grid; place-items: center; text-align: center; transform: rotate(-8deg);
+  }
+  .sello b { font-size: 42px; line-height: 1; display: block; }
+  .sello span { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Reportar */
+  .opcion { display: flex; align-items: center; gap: 12px; padding: 14px; border: 2px solid var(--borde); border-radius: 14px; margin-bottom: 10px; font-weight: 700; cursor: pointer; }
+  .opcion input { width: 20px; height: 20px; accent-color: var(--naranja); }
+  .opcion:has(input:checked) { border-color: var(--naranja); background: #FFF1E6; }
+  .recibido { display: none; }
+
+  /* Chat con el técnico */
+  #s-chat { padding: 0; }
+  .chat-cabeza { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--borde); background: var(--blanco); }
+  .chat-cabeza .avatar { width: 40px; height: 40px; font-size: 15px; }
+  .chat-cabeza b { display: block; font-size: 16px; }
+  .chat-cabeza small { color: var(--verde); font-size: 12px; font-weight: 700; }
+  .chat-cabeza .llamar-mini { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: var(--verde-claro); color: var(--verde); display: grid; place-items: center; }
+  .chat-cabeza .llamar-mini svg { width: 20px; height: 20px; }
+  .mensajes { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #F7F8FA; }
+  .burbuja { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 15px; line-height: 1.35; }
+  .burbuja small { display: block; font-size: 11px; opacity: .6; margin-top: 2px; text-align: right; }
+  .burbuja.el { align-self: flex-start; background: var(--blanco); border: 1px solid var(--borde); border-bottom-left-radius: 4px; }
+  .burbuja.yo { align-self: flex-end; background: #FFE3CC; border-bottom-right-radius: 4px; }
+  .escribiendo { align-self: flex-start; font-size: 13px; color: var(--gris); font-style: italic; }
+  .rapidas { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 0; scrollbar-width: none; }
+  .rapidas .chip { padding: 8px 12px; font-size: 13px; white-space: nowrap; flex: none; }
+  .escribir { display: flex; gap: 8px; padding: 10px 16px 16px; }
+  .escribir input { flex: 1; min-width: 0; padding: 12px 16px; border-radius: 99px; border: 2px solid var(--borde); outline: none; font-size: 15px; }
+  .escribir input:focus { border-color: var(--naranja); }
+  .escribir button { width: 46px; height: 46px; border-radius: 50%; background: var(--naranja); display: grid; place-items: center; flex: none; }
+  .escribir button svg { width: 20px; height: 20px; }
+
+  /* Llamada simulada */
+  #s-llamada { background: var(--azul); color: var(--blanco); text-align: center; }
+  #s-llamada .avatar { width: 112px; height: 112px; font-size: 38px; margin: 48px auto 16px; border: 4px solid rgba(255,255,255,.25); }
+  #s-llamada h2 { font-size: 26px; }
+  .estado-llamada { font-size: 16px; opacity: .85; }
+  .controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: auto; padding: 0 8px 12px; }
+  .control { display: grid; justify-items: center; gap: 8px; font-size: 13px; }
+  .control span:first-child { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; }
+  .control svg { width: 26px; height: 26px; }
+  .control.on span:first-child { background: var(--blanco); color: var(--azul); }
+  .control.colgar span:first-child { background: var(--rojo); }
+  .nota-simulada { font-size: 12px; opacity: .6; margin-bottom: 8px; }
+  #s-llamada .atras { background: rgba(255,255,255,.14); }
+  .latido { animation: latido 1.2s ease-in-out infinite; }
+  @keyframes latido { 50% { box-shadow: 0 0 0 14px rgba(255,107,0,.25); } }
+
+  /* Aviso del reto de 60 segundos */
+  .aviso {
+    position: absolute; left: 16px; right: 16px; top: 16px; z-index: 5;
+    background: var(--azul); color: var(--blanco); border-radius: 14px; padding: 14px 16px;
+    font-weight: 700; font-size: 15px; box-shadow: 0 8px 24px rgba(11,37,69,.3);
+    transform: translateY(calc(-100% - 32px)); visibility: hidden;
+    transition: transform .3s, visibility .3s;
+  }
+  .aviso.ver { transform: none; visibility: visible; }
+  .aviso small { display: block; font-weight: 400; opacity: .85; }
+</style>
+</head>
+<body>
+<main class="device" id="app">
+
+  <div class="aviso" id="aviso" role="status"></div>
+
+  <!-- Ícono reutilizado por todos los botones de volver -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-tel" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  </svg>
+
+  <!-- 1. Bienvenida (primera pantalla: no tiene a dónde volver) -->
+  <section class="screen activa" id="s-bienvenida">
+    <svg class="logo" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="52" fill="none" stroke="#FFFFFF" stroke-width="8"/>
+      <g stroke="#FFFFFF" stroke-width="4" stroke-linecap="round">
+        <line x1="60" y1="14" x2="60" y2="22"/><line x1="106" y1="60" x2="98" y2="60"/>
+        <line x1="60" y1="106" x2="60" y2="98"/><line x1="14" y1="60" x2="22" y2="60"/>
+      </g>
+      <!-- Manecilla corta en forma de llave inglesa -->
+      <g transform="rotate(-50 60 60)">
+        <rect x="56" y="30" width="8" height="32" rx="4" fill="#FF6B00"/>
+        <path d="M60 18a12 12 0 1 0 0.01 0zM55 18h10v10H55z" fill="#FF6B00" fill-rule="evenodd"/>
+      </g>
+      <!-- Manecilla larga -->
+      <rect x="57" y="58" width="6" height="36" rx="3" fill="#FFFFFF" transform="rotate(120 60 60)"/>
+      <circle cx="60" cy="60" r="7" fill="#FF6B00"/>
+    </svg>
+    <h1>Mantenimiento<br>sin Espera</h1>
+    <p class="eslogan">Llega, cobra lo justo, responde.</p>
+    <span class="etiqueta-prototipo">Prototipo – datos de ejemplo</span>
+    <button class="boton" data-accion="empezar">Empezar</button>
+  </section>
+
+  <!-- 2. Inicio -->
+  <section class="screen" id="s-inicio">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Hola, ¿en qué te ayudamos?</span>
+    </div>
+    <label class="ubicacion">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      <span style="flex:1"><small>Tu ubicación · Ciudad de Panamá</small><select id="barrio" aria-label="Barrio"></select></span>
+    </label>
+    <h1>¿Qué se dañó?</h1>
+    <p class="sub">Técnicos verificados, con precio antes de confirmar.</p>
+    <div class="oficios">
+      <button class="oficio" data-oficio="Plomería">
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+        <span>Plomería<small>Tuberías, inodoros, bombas</small></span>
+      </button>
+      <button class="oficio" data-oficio="Electricidad">
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+        <span>Electricidad<small>Tableros, cortos, instalaciones</small></span>
+      </button>
+      <button class="oficio" data-oficio="Aire acondicionado">
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.9 6.9l14.2 10.2M19.1 6.9 4.9 17.1M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span>
+        <span>Aire acondicionado<small>Split, ventana, mantenimiento</small></span>
+      </button>
+    </div>
+    <div class="abajo">
+      <button class="emergencia" data-accion="emergencia">🚨 Emergencia</button>
+    </div>
+  </section>
+
+  <!-- 3. Tipo de servicio -->
+  <section class="screen" id="s-tipo">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <div class="progreso"><span style="width:33%"></span></div><span class="paso">Paso 1 de 3</span>
+    </div>
+    <h2>¿Qué necesitas?</h2>
+    <p class="sub" data-texto="oficio"></p>
+    <div class="chips" data-campo="tipo">
+      <button class="chip">Instalación</button>
+      <button class="chip">Reparación</button>
+      <button class="chip">Mantenimiento</button>
+      <button class="chip">Emergencia</button>
+      <button class="chip">Diagnóstico</button>
+    </div>
+  </section>
+
+  <!-- 4. Aparato -->
+  <section class="screen" id="s-aparato">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <div class="progreso"><span style="width:66%"></span></div><span class="paso">Paso 2 de 3</span>
+    </div>
+    <h2>¿Qué aparato es?</h2>
+    <p class="sub">Así te mostramos técnicos que ya lo conocen.</p>
+    <div class="chips" data-campo="aparato">
+      <button class="chip">Aire split</button>
+      <button class="chip">Aire de ventana</button>
+      <button class="chip">Refrigeradora</button>
+      <button class="chip">Lavadora</button>
+      <button class="chip">Calentador</button>
+      <button class="chip">Tablero eléctrico</button>
+      <button class="chip">Tubería</button>
+      <button class="chip">Inodoro</button>
+      <button class="chip">Bomba de agua</button>
+    </div>
+  </section>
+
+  <!-- 5. Marca -->
+  <section class="screen" id="s-marca">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <div class="progreso"><span style="width:100%"></span></div><span class="paso">Paso 3 de 3</span>
+    </div>
+    <h2>¿De qué marca?</h2>
+    <p class="sub">Un técnico que conoce tu marca resuelve más rápido.</p>
+    <div class="chips" data-campo="marca">
+      <button class="chip">LG</button>
+      <button class="chip">Samsung</button>
+      <button class="chip">Carrier</button>
+      <button class="chip">Daikin</button>
+      <button class="chip">Midea</button>
+      <button class="chip">Marca X</button>
+      <button class="chip">No sé / otra</button>
+    </div>
+  </section>
+
+  <!-- 6. Lista de técnicos -->
+  <section class="screen" id="s-lista">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <h2>3 técnicos disponibles</h2>
+    <span class="resumen" data-texto="resumen"></span>
+    <p class="orden" data-texto="orden"></p>
+    <div id="lista-tecnicos"></div>
+  </section>
+
+  <!-- 7. Perfil del técnico -->
+  <section class="screen" id="s-perfil">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <div id="perfil-contenido"></div>
+    <div class="abajo"><button class="boton" data-accion="elegir" data-texto="elegir"></button></div>
+  </section>
+
+  <!-- 8. Confirmación -->
+  <section class="screen" id="s-confirmacion">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <h2>Confirma tu servicio</h2>
+    <p class="sub">Revisa antes de pedir. Pagas al terminar.</p>
+    <div class="filas" id="confirmacion-filas"></div>
+    <div class="garantia-chip">✓ Incluye garantía de 15 días</div>
+    <div class="abajo">
+      <button class="boton" data-accion="confirmar">Confirmar</button>
+      <button class="boton secundario" data-accion="cambiar">Cambiar técnico</button>
+    </div>
+  </section>
+
+  <!-- 9. Seguimiento -->
+  <section class="screen" id="s-seguimiento">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Servicio en curso</span>
+    </div>
+    <h2 data-texto="camino"></h2>
+    <p class="sub" data-texto="ruta"></p>
+    <div class="mapa" id="mapa"></div>
+    <div class="eta" data-texto="eta"></div>
+    <div class="barra-llegada" id="barra-llegada"><span></span></div>
+    <p class="linea" data-texto="vehiculo"></p>
+    <div class="abajo acciones">
+      <button class="boton secundario" data-ir="s-llamada"><svg><use href="#i-tel"/></svg>Llamar</button>
+      <button class="boton secundario" data-ir="s-chat"><svg><use href="#i-chat"/></svg>Mensaje</button>
+    </div>
+  </section>
+
+  <!-- 10. Pago y calificación -->
+  <section class="screen" id="s-pago">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <div class="exito">
+      <div class="circulo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E8E4E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <h2>¡Listo! Tu servicio quedó hecho</h2>
+    </div>
+    <div class="filas" id="pago-filas"></div>
+    <p class="seccion" style="text-align:center" data-texto="como"></p>
+    <div class="calificar" id="calificar">
+      <button aria-label="1 estrella">★</button><button aria-label="2 estrellas">★</button><button aria-label="3 estrellas">★</button><button aria-label="4 estrellas">★</button><button aria-label="5 estrellas">★</button>
+    </div>
+    <div class="abajo"><button class="boton" data-accion="pagar">Pagar y calificar</button></div>
+  </section>
+
+  <!-- 10b. Garantía activa -->
+  <section class="screen" id="s-garantia">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <h2 style="text-align:center">Garantía activa</h2>
+    <div class="sello"><div><b>15</b><span>días de<br>garantía</span></div></div>
+    <p class="sub" style="text-align:center" data-texto="vence"></p>
+    <div class="caja"><strong>Si algo falla</strong><span data-texto="promesa"></span></div>
+    <div class="acciones">
+      <button class="boton secundario" data-ir="s-llamada"><svg><use href="#i-tel"/></svg>Llamar</button>
+      <button class="boton secundario" data-ir="s-chat"><svg><use href="#i-chat"/></svg>Mensaje</button>
+    </div>
+    <div class="abajo">
+      <button class="boton" data-ir="s-reportar">Reportar problema</button>
+      <button class="boton secundario" data-accion="reiniciar">Volver al inicio</button>
+    </div>
+  </section>
+
+  <!-- Extra: Reportar problema -->
+  <section class="screen" id="s-reportar">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <div id="reporte-form">
+      <h2>¿Qué pasó?</h2>
+      <p class="sub">Tu garantía sigue activa. Cuéntanos y lo resolvemos.</p>
+      <label class="opcion"><input type="radio" name="problema" checked> El equipo volvió a fallar</label>
+      <label class="opcion"><input type="radio" name="problema"> Quedó algo mal hecho</label>
+      <label class="opcion"><input type="radio" name="problema"> Otro</label>
+    </div>
+    <div class="recibido" id="reporte-recibido">
+      <div class="exito">
+        <div class="circulo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E8E4E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+        <h2>Recibido</h2>
+      </div>
+      <p class="sub" style="text-align:center" data-texto="reporte"></p>
+    </div>
+    <div class="abajo">
+      <button class="boton" id="enviar-reporte" data-accion="reportar">Enviar reporte</button>
+      <button class="boton secundario" data-accion="reiniciar">Volver al inicio</button>
+    </div>
+  </section>
+
+  <!-- Chat con el técnico -->
+  <section class="screen" id="s-chat">
+    <div class="chat-cabeza">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="avatar" id="chat-avatar"></span>
+      <span><b data-texto="chat-nombre"></b><small>● En línea</small></span>
+      <button class="llamar-mini" data-ir="s-llamada" aria-label="Llamar"><svg><use href="#i-tel"/></svg></button>
+    </div>
+    <div class="mensajes" id="mensajes"></div>
+    <div class="rapidas" id="rapidas">
+      <button class="chip" data-rapida>¿Cuánto te falta?</button>
+      <button class="chip" data-rapida>Es en el piso 5, apto 5B</button>
+      <button class="chip" data-rapida>¿Cuánto me va a costar?</button>
+      <button class="chip" data-rapida>Gracias</button>
+    </div>
+    <form class="escribir" id="form-chat">
+      <input id="texto-chat" placeholder="Escribe un mensaje" autocomplete="off" aria-label="Mensaje">
+      <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="#0B2545" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+    </form>
+  </section>
+
+  <!-- Llamada simulada -->
+  <section class="screen" id="s-llamada">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+    </div>
+    <span class="avatar latido" id="llamada-avatar"></span>
+    <h2 data-texto="llamada-nombre"></h2>
+    <p class="estado-llamada" id="estado-llamada">Llamando…</p>
+    <div class="controles">
+      <button class="control" data-control="silencio"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M3 3l18 18"/></svg></span><span>Silenciar</span></button>
+      <button class="control" data-control="altavoz"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></span><span>Altavoz</span></button>
+      <button class="control colgar" data-accion="colgar"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M3 15c5-5 13-5 18 0l-2.5 2.5-3-2v-2.5a12 12 0 0 0-7 0V15l-3 2z"/></svg></span><span>Colgar</span></button>
+    </div>
+    <p class="nota-simulada">Llamada simulada · prototipo</p>
+  </section>
+</main>
+
+<script>
+  // Barrios de la Ciudad de Panamá con coordenadas aproximadas (latitud, longitud)
+  const BARRIOS = {
+    'Albrook': [8.975, -79.553],
+    'Bella Vista': [8.983, -79.525],
+    'Betania': [9.012, -79.530],
+    'Casco Viejo': [8.952, -79.535],
+    'Clayton': [9.003, -79.582],
+    'Condado del Rey': [9.035, -79.541],
+    'Costa del Este': [9.013, -79.462],
+    'El Cangrejo': [8.990, -79.527],
+    'El Dorado': [9.010, -79.545],
+    'Juan Díaz': [9.033, -79.452],
+    'Marbella': [8.979, -79.520],
+    'Obarrio': [8.987, -79.519],
+    'Punta Paitilla': [8.978, -79.513],
+    'San Francisco': [8.997, -79.505],
+    'San Miguelito': [9.033, -79.500]
+  };
+
+  // Datos de ejemplo (pestaña "Fase 2 — Datos de ejemplo" del plan)
+  const TECNICOS = [
+    {
+      id: 'carlos', nombre: 'Carlos Méndez', iniciales: 'CM', color: '#0B2545', base: 'El Cangrejo',
+      zona: 'El Cangrejo, Bella Vista y Obarrio', estrellas: '4,8', resenas: 126, servicios: 140,
+      puntualidad: '96 %', precio: '$45 – $70', total: '$55', anios: 8, marcas: 'LG, Samsung, Marca X',
+      horario: 'Lun–Sáb, 7:00–18:00', vehiculo: 'Moto gris', fuerte: 'Muy puntual',
+      verificacion: 'cédula, foto y 3 referencias',
+      opiniones: [
+        ['★★★★★', 'Llegó a la hora que dijo la app y el aire quedó enfriando el mismo día.', 'María P., Bella Vista'],
+        ['★★★★★', 'Cobró lo que marcaba el rango. Me explicó qué tenía el equipo.', 'Jorge L., Obarrio'],
+        ['★★★★☆', 'Buen trabajo, solo tardó un poco en conseguir el repuesto.', 'Daniela R., Marbella']
+      ]
+    },
+    {
+      id: 'ana', nombre: 'Ana Rodríguez', iniciales: 'AR', color: '#1E8E4E', base: 'San Francisco',
+      zona: 'San Francisco, Punta Paitilla y Costa del Este', estrellas: '4,9', resenas: 212, servicios: 230,
+      puntualidad: '98 %', precio: '$50 – $80', total: '$65', anios: 12, marcas: 'Carrier, Daikin, Marca X',
+      horario: 'Lun–Vie, 8:00–17:00', vehiculo: 'Carro blanco', fuerte: 'Mejor calificada',
+      verificacion: 'cédula, foto, 4 referencias y certificado técnico',
+      opiniones: [
+        ['★★★★★', 'Conoce la marca a fondo; encontró la falla en diez minutos.', 'Roberto S., Costa del Este'],
+        ['★★★★★', 'Muy ordenada, dejó todo limpio. La volvería a llamar.', 'Carmen V., San Francisco'],
+        ['★★★★★', 'El aire volvió a fallar a la semana y regresó sin cobrar, como dice la garantía.', 'Pedro A., Punta Paitilla']
+      ]
+    },
+    {
+      id: 'luis', nombre: 'Luis Herrera', iniciales: 'LH', color: '#C2410C', base: 'Betania',
+      zona: 'Betania, El Dorado y Condado del Rey', estrellas: '4,6', resenas: 58, servicios: 64,
+      puntualidad: '91 %', precio: '$40 – $60', total: '$48', anios: 4, marcas: 'Midea, Marca X',
+      horario: 'Lun–Dom, 8:00–20:00', vehiculo: 'Moto roja', fuerte: 'Precio más bajo',
+      verificacion: 'cédula, foto y 2 referencias',
+      opiniones: [
+        ['★★★★★', 'El más económico y resolvió rápido.', 'Sofía G., El Dorado'],
+        ['★★★★☆', 'Amable y cumplido. Llegó un poco tarde, pero avisó por la app.', 'Andrés M., Betania']
+      ]
+    }
+  ];
+
+  const INICIAL = { oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista' };
+  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {} };
+  const historial = [];
+  let temporizador = null;  // avance automático del seguimiento
+  let reloj = null;         // cronómetro de la llamada
+
+  const $ = sel => document.querySelector(sel);
+  const texto = (clave, valor) => document.querySelectorAll(`[data-texto="${clave}"]`).forEach(el => { el.textContent = valor; });
+  const nombreCorto = t => t.nombre.split(' ')[0];
+
+  // Distancia en km entre dos barrios y tiempo estimado de llegada con tráfico
+  function km(a, b) {
+    const [la1, lo1] = BARRIOS[a], [la2, lo2] = BARRIOS[b], r = Math.PI / 180;
+    const h = Math.sin((la2 - la1) * r / 2) ** 2 + Math.cos(la1 * r) * Math.cos(la2 * r) * Math.sin((lo2 - lo1) * r / 2) ** 2;
+    return 12742 * Math.asin(Math.sqrt(h));
+  }
+  const minutos = t => Math.round(6 + km(t.base, estado.barrio) * 2.4);
+  const distancia = t => km(t.base, estado.barrio).toFixed(1).replace('.', ',');
+  const ordenados = () => [...TECNICOS].sort((a, b) => minutos(a) - minutos(b));
+
+  function ir(id, guardar = true) {
+    const actual = document.querySelector('.screen.activa');
+    if (actual && actual.id === id) return;
+    if (guardar && actual) historial.push(actual.id);
+    salir(actual && actual.id);
+    if (actual) actual.classList.remove('activa');
+    const siguiente = document.getElementById(id);
+    preparar(id);
+    siguiente.classList.add('activa');
+    siguiente.scrollTop = 0;
+  }
+
+  function atras() {
+    const anterior = historial.pop();
+    ir(anterior || 's-bienvenida', false);
+  }
+
+  // Detiene lo que corre en la pantalla que se deja
+  function salir(id) {
+    if (id === 's-seguimiento') clearTimeout(temporizador);
+    if (id === 's-llamada') clearInterval(reloj);
+  }
+
+  function avisar(titulo, detalle) {
+    const aviso = $('#aviso');
+    aviso.innerHTML = `${titulo}<small>${detalle}</small>`;
+    aviso.classList.add('ver');
+    setTimeout(() => aviso.classList.remove('ver'), 3500);
+  }
+
+  // Mapa esquemático de la ciudad con la ruta del técnico hasta el cliente
+  function dibujarMapa(t) {
+    const p = b => { const [la, lo] = BARRIOS[b]; return [(lo + 79.6) / 0.16 * 350, (9.055 - la) / 0.115 * 220]; };
+    const [x1, y1] = p(t.base), [x2, y2] = p(estado.barrio);
+    const puntos = Object.keys(BARRIOS).map(b => { const [x, y] = p(b); return `<circle cx="${x}" cy="${y}" r="3" fill="#B8C2CC"/>`; }).join('');
+    // Etiqueta arriba del punto, o debajo si chocaría con la del cliente
+    const etiqueta = (x, y, txt, color, abajo) => {
+      const ancho = txt.length * 6.4 + 12, izq = Math.min(Math.max(x - ancho / 2, 4), 346 - ancho), arriba = abajo ? y + 14 : y - 32;
+      return `<rect x="${izq}" y="${arriba}" width="${ancho}" height="18" rx="9" fill="${color}"/><text x="${izq + ancho / 2}" y="${arriba + 13}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${txt}</text>`;
+    };
+    const tecnicoAbajo = Math.abs(y1 - y2) < 26;
+    const cx = (x1 + x2) / 2, cy = Math.min(y1, y2) - 24;
+    $('#mapa').innerHTML = `
+      <svg viewBox="0 0 350 220" role="img" aria-label="Ruta de ${t.base} a ${estado.barrio}">
+        <rect width="350" height="220" fill="#EEF2EC"/>
+        <path d="M95 220 L118 200 L140 176 L172 158 L205 150 L245 132 L300 92 L350 84 L350 220 Z" fill="#CFE3F2"/>
+        <text x="335" y="204" text-anchor="end" font-size="11" fill="#5B7FA0" font-style="italic">Bahía de Panamá</text>
+        <text x="8" y="16" font-size="10" fill="#5B6575">Ciudad de Panamá · mapa de ejemplo</text>
+        ${puntos}
+        <path d="M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}" fill="none" stroke="#FF6B00" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 8"/>
+        <circle cx="${x1}" cy="${y1}" r="8" fill="#0B2545"/>
+        <circle cx="${x2}" cy="${y2}" r="9" fill="#FF6B00" stroke="#FFFFFF" stroke-width="3"/>
+        ${etiqueta(x1, y1, t.base, '#0B2545', tecnicoAbajo)}
+        ${etiqueta(x2, y2, 'Tú · ' + estado.barrio, '#FF6B00', false)}
+      </svg>`;
+  }
+
+  // Chat: respuestas automáticas del técnico según lo que escribe el cliente
+  function respuesta(msg, t) {
+    const m = msg.toLowerCase();
+    if (/falta|cu[aá]nto.*(tarda|demora)|llegas|d[oó]nde/.test(m)) return `Voy saliendo de ${t.base}, estoy a unos ${minutos(t)} minutos de ${estado.barrio}.`;
+    if (/piso|apto|edificio|casa|direcci|port[oó]n/.test(m)) return 'Perfecto, anotado. Te aviso cuando esté abajo. 👍';
+    if (/precio|cuesta|costar|cobr|pago/.test(m)) return `El rango es ${t.precio} sin repuestos. Al revisar el equipo te confirmo antes de empezar.`;
+    if (/gracias/.test(m)) return '¡A la orden! Nos vemos ahorita.';
+    if (/hola|buenas/.test(m)) return '¡Hola! ¿En qué te ayudo?';
+    return 'Recibido, ya lo tengo en cuenta.';
+  }
+
+  function pintarChat() {
+    const t = estado.tecnico, lista = estado.chats[t.id];
+    $('#mensajes').innerHTML = lista.map(m => m.escribiendo
+      ? `<span class="escribiendo">${nombreCorto(t)} está escribiendo…</span>`
+      : `<div class="burbuja ${m.de}">${m.texto}<small>${m.hora}</small></div>`).join('');
+    $('#mensajes').scrollTop = $('#mensajes').scrollHeight;
+  }
+
+  function enviar(msg) {
+    msg = msg.trim();
+    if (!msg) return;
+    const t = estado.tecnico, lista = estado.chats[t.id];
+    const hora = () => new Date().toLocaleTimeString('es-PA', { hour: 'numeric', minute: '2-digit' });
+    lista.push({ de: 'yo', texto: msg.replace(/[<>&]/g, ''), hora: hora() });
+    const pensando = { escribiendo: true };
+    lista.push(pensando);
+    pintarChat();
+    setTimeout(() => {
+      lista.splice(lista.indexOf(pensando), 1, { de: 'el', texto: respuesta(msg, t), hora: hora() });
+      if ($('#s-chat').classList.contains('activa')) pintarChat();
+    }, 1300);
+  }
+
+  // Llena cada pantalla con los datos del pedido justo antes de mostrarla
+  function preparar(id) {
+    const t = estado.tecnico;
+    if (id === 's-tipo') texto('oficio', estado.oficio);
+    if (id === 's-lista') {
+      const lista = ordenados();
+      texto('resumen', `${estado.tipo} · ${estado.aparato} · ${estado.marca}`);
+      texto('orden', `Cerca de ${estado.barrio} · ordenados por el que llega primero`);
+      $('#lista-tecnicos').innerHTML = lista.map((x, i) => `
+        <button class="tarjeta" data-tecnico="${x.id}">
+          <span class="avatar" style="background:${x.color}">${x.iniciales}</span>
+          <span class="info">
+            <span class="nombre">${x.nombre} <span class="verif">✓ Verificado</span></span>
+            <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span>
+            <span class="datos"><span>★ <b>${x.estrellas}</b> (${x.resenas})</span><span><b>${x.precio}</b></span></span>
+            <span class="datos"><span>Llega en <b>${minutos(x)} min</b> · ${distancia(x)} km</span><span class="destaca">${i === 0 ? 'Llega primero' : x.fuerte}</span></span>
+          </span>
+        </button>`).join('');
+    }
+    if (id === 's-perfil') {
+      $('#perfil-contenido').innerHTML = `
+        <div class="perfil-cabeza">
+          <span class="avatar" style="background:${t.color}">${t.iniciales}</span>
+          <h2>${t.nombre}</h2>
+          <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>★ ${t.estrellas}</b><span>${t.resenas} reseñas</span></div>
+          <div class="stat"><b>${t.servicios}</b><span>servicios</span></div>
+          <div class="stat"><b>${t.puntualidad}</b><span>a tiempo</span></div>
+        </div>
+        <div class="caja"><strong>✓ Identidad verificada</strong>Revisamos ${t.verificacion}.</div>
+        <p class="linea"><b>Precio estimado:</b> ${t.precio}</p>
+        <p class="linea"><b>Sale desde:</b> ${t.base} · llega a ${estado.barrio} en ${minutos(t)} min</p>
+        <p class="linea"><b>Zona:</b> ${t.zona}</p>
+        <p class="linea"><b>Experiencia:</b> ${t.anios} años · <b>Marcas:</b> ${t.marcas}</p>
+        <p class="linea" style="margin-bottom:16px"><b>Horario:</b> ${t.horario}</p>
+        <p class="seccion">Reseñas</p>
+        ${t.opiniones.map(([e, c, q]) => `
+          <div class="resena"><span class="estrellas">${e}</span> <span class="completado">✓ Servicio completado en la app</span>
+          <p>“${c}”</p><span class="quien">${q}</span></div>`).join('')}`;
+      texto('elegir', `Elegir a ${nombreCorto(t)}`);
+    }
+    if (id === 's-confirmacion') {
+      const llegada = new Date(Date.now() + minutos(t) * 60000).toLocaleTimeString('es-PA', { hour: 'numeric', minute: '2-digit' });
+      $('#confirmacion-filas').innerHTML = `
+        <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()} – ${estado.marca}</b></div>
+        <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
+        <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
+        <div class="fila"><span>Precio estimado</span><b>${t.precio}<br><small style="font-weight:400">sin repuestos</small></b></div>
+        <div class="fila"><span>Llega aprox.</span><b>${llegada}</b></div>`;
+    }
+    if (id === 's-seguimiento') {
+      texto('camino', `${nombreCorto(t)} va en camino`);
+      texto('ruta', `De ${t.base} a ${estado.barrio} · ${distancia(t)} km`);
+      texto('eta', `Llega en ${minutos(t)} min`);
+      texto('vehiculo', `${t.vehiculo} · ${t.nombre}`);
+      dibujarMapa(t);
+      const barra = $('#barra-llegada');
+      barra.classList.remove('corre'); void barra.offsetWidth; barra.classList.add('corre');
+      clearTimeout(temporizador);
+      temporizador = setTimeout(() => ir('s-pago'), 6000); // simula la llegada (After delay)
+    }
+    if (id === 's-pago') {
+      $('#pago-filas').innerHTML = `
+        <div class="fila"><span>${estado.tipo} de ${estado.aparato.toLowerCase()}</span><b>${t.total}</b></div>
+        <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>`;
+      texto('como', `¿Cómo te fue con ${nombreCorto(t)}?`);
+      pintarEstrellas(5);
+    }
+    if (id === 's-garantia') {
+      const vence = new Date(Date.now() + 15 * 864e5).toLocaleDateString('es-PA', { day: 'numeric', month: 'long' });
+      texto('vence', `Válida hasta el ${vence}`);
+      texto('promesa', `${nombreCorto(t)} vuelve sin costo o enviamos a otro técnico, pagado por la plataforma.`);
+    }
+    if (id === 's-reportar') {
+      $('#reporte-form').style.display = '';
+      $('#reporte-recibido').style.display = 'none';
+      $('#enviar-reporte').style.display = '';
+    }
+    if (id === 's-chat') {
+      const av = $('#chat-avatar');
+      av.textContent = t.iniciales; av.style.background = t.color;
+      texto('chat-nombre', t.nombre);
+      if (!estado.chats[t.id]) {
+        estado.chats[t.id] = [{ de: 'el', hora: new Date().toLocaleTimeString('es-PA', { hour: 'numeric', minute: '2-digit' }),
+          texto: `¡Buenas! Soy ${nombreCorto(t)}, ${t.id === 'ana' ? 'tu técnica' : 'tu técnico'}. Cualquier detalle de la dirección en ${estado.barrio} me lo escribes por aquí.` }];
+      }
+      pintarChat();
+    }
+    if (id === 's-llamada') {
+      const av = $('#llamada-avatar');
+      av.textContent = t.iniciales; av.style.background = t.color; av.classList.add('latido');
+      texto('llamada-nombre', t.nombre);
+      document.querySelectorAll('[data-control]').forEach(c => c.classList.remove('on'));
+      const estadoLlamada = $('#estado-llamada');
+      estadoLlamada.textContent = 'Llamando…';
+      clearInterval(reloj);
+      let segundos = -2; // dos segundos timbrando antes de que conteste
+      reloj = setInterval(() => {
+        segundos++;
+        if (segundos < 0) return;
+        av.classList.remove('latido');
+        estadoLlamada.textContent = `En llamada · ${String(Math.floor(segundos / 60)).padStart(2, '0')}:${String(segundos % 60).padStart(2, '0')}`;
+      }, 1000);
+    }
+  }
+
+  function pintarEstrellas(n) {
+    document.querySelectorAll('#calificar button').forEach((b, i) => b.classList.toggle('on', i < n));
+  }
+
+  // Lista de barrios para elegir la ubicación
+  $('#barrio').innerHTML = Object.keys(BARRIOS).map(b => `<option${b === estado.barrio ? ' selected' : ''}>${b}</option>`).join('');
+  $('#barrio').addEventListener('change', e => { estado.barrio = e.target.value; });
+
+  $('#form-chat').addEventListener('submit', e => {
+    e.preventDefault();
+    enviar($('#texto-chat').value);
+    $('#texto-chat').value = '';
+  });
+
+  // Un solo manejador para todos los toques
+  document.addEventListener('click', e => {
+    const el = e.target.closest('button, [data-tecnico]');
+    if (!el || el.form) return; // el botón de enviar del chat lo maneja el formulario
+
+    if (el.dataset.ir) return ir(el.dataset.ir);
+    if (el.dataset.oficio) { estado.oficio = el.dataset.oficio; return ir('s-tipo'); }
+    if (el.dataset.tecnico) { estado.tecnico = TECNICOS.find(x => x.id === el.dataset.tecnico); return ir('s-perfil'); }
+    if (el.hasAttribute('data-rapida')) return enviar(el.textContent);
+    if (el.dataset.control) return el.classList.toggle('on');
+
+    const grupo = el.closest('[data-campo]');
+    if (grupo && el.classList.contains('chip')) {
+      grupo.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
+      el.classList.add('sel');
+      estado[grupo.dataset.campo] = el.textContent.trim();
+      const siguiente = { tipo: 's-aparato', aparato: 's-marca', marca: 's-lista' }[grupo.dataset.campo];
+      return setTimeout(() => ir(siguiente), 150);
+    }
+
+    if (el.parentElement && el.parentElement.id === 'calificar') {
+      return pintarEstrellas([...el.parentElement.children].indexOf(el) + 1);
+    }
+
+    switch (el.dataset.accion) {
+      case 'empezar':
+        estado.inicio = Date.now();
+        return ir('s-inicio');
+      case 'emergencia':
+        estado.tipo = 'Emergencia';
+        return ir('s-aparato');
+      case 'atras':
+      case 'colgar':
+        return atras();
+      case 'elegir':
+        return ir('s-confirmacion');
+      case 'cambiar':
+        historial.splice(historial.lastIndexOf('s-lista'));
+        return ir('s-lista', false);
+      case 'confirmar': {
+        if (estado.inicio) {
+          const s = Math.round((Date.now() - estado.inicio) / 1000);
+          avisar(`Pediste un técnico en ${s} s`, s <= 60 ? '¡Reto de los 60 segundos superado!' : 'Inténtalo otra vez en menos de 60 s');
+          estado.inicio = null;
+        }
+        return ir('s-seguimiento');
+      }
+      case 'pagar':
+        return ir('s-garantia');
+      case 'reportar':
+        $('#reporte-form').style.display = 'none';
+        $('#reporte-recibido').style.display = 'block';
+        el.style.display = 'none';
+        texto('reporte', `${nombreCorto(estado.tecnico)} vuelve sin costo; si no responde en 24 horas, enviamos a otro técnico.`);
+        return;
+      case 'reiniciar':
+        historial.length = 0;
+        document.querySelectorAll('.chip.sel').forEach(c => c.classList.remove('sel'));
+        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {} });
+        $('#barrio').value = estado.barrio;
+        return ir('s-bienvenida', false);
+    }
+  });
+</script>
+</body>
+</html>
