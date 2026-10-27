@@ -3,287 +3,348 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B2545">
+<meta name="theme-color" content="#13213C">
 <title>InstaFix</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23F28C28'/%3E%3Cmask id='m' maskUnits='userSpaceOnUse' x='-20' y='-20' width='104' height='104'%3E%3Crect x='-20' y='-20' width='104' height='104' fill='%23fff'/%3E%3Crect x='26.5' y='-4' width='11' height='16' rx='1.5' fill='%23000'/%3E%3C/mask%3E%3Cg transform='translate(32 32) scale(.7) rotate(45) translate(-32 -33.5)' fill='%2313213C'%3E%3Ccircle cx='32' cy='14' r='13' mask='url(%23m)'/%3E%3Crect x='25' y='23' width='14' height='10' rx='3'/%3E%3Cpath d='M35 31 29.5 44.5H37L31.5 58v8' fill='none' stroke='%2313213C' stroke-width='8' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Identidad InstaFix: ver DESIGN.md */
   :root {
-    --azul: #0B2545;
-    --naranja: #FF6B00;
-    --blanco: #FFFFFF;
-    --tarjeta: #F3F5F8;
-    --gris: #5B6575;
-    --borde: #DDE2E9;
-    --verde: #1E8E4E;
-    --verde-claro: #E3F4EA;
-    --rojo: #D93025;
-    --radio: 16px;
+    --tinta: #13213C;          /* azul marino de la marca: texto principal y superficies de marca */
+    --tinta-hover: #22355C;
+    --naranja: #F28C28;        /* acento: acción principal y selección actual */
+    --naranja-hover: #E27A14;
+    --naranja-texto: #A9520A;  /* naranja legible sobre fondos claros */
+    --naranja-suave: #FDEBD8;
+    --fondo: #F7F5F0;          /* superficie de la app, blanco cálido como la hoja de marca */
+    --superficie: #FFFFFF;
+    --neutro: #EFECE5;         /* segunda capa neutra: controles secundarios */
+    --borde: #E1DCD1;
+    --borde-fuerte: #CFC8BA;
+    --gris: #565F73;
+    --placeholder: #6B7385;
+    --verde: #17784A;
+    --verde-claro: #E3F1E8;
+    --rojo: #BF2B1F;
+    --rojo-claro: #FBE9E6;
+    --radio: 14px;
+    --radio-control: 12px;
+    --sombra: 0 12px 32px -10px rgba(19, 33, 60, .22);
+    --salida: cubic-bezier(.16, 1, .3, 1);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; }
   body {
-    font-family: "Nunito", ui-rounded, "Segoe UI", system-ui, sans-serif;
-    color: var(--azul);
-    background: #E9EDF2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    font-family: "Rubik", system-ui, "Segoe UI", sans-serif;
+    font-size: 15px; line-height: 1.45;
+    color: var(--tinta);
+    background: #E6E2D9;
+    display: flex; justify-content: center; align-items: center;
     -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
   }
+  ::selection { background: rgba(242, 140, 40, .28); }
+  input, select { caret-color: var(--naranja-texto); }
   button, input, select { font: inherit; color: inherit; }
   button { background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--naranja); outline-offset: 2px; border-radius: 6px; }
+  .num { font-variant-numeric: tabular-nums; }
+  svg.i { width: 20px; height: 20px; flex: none; }
 
   /* Marco de celular en computadora; pantalla completa en el celular */
   .device {
     position: relative;
     width: 390px;
     height: min(844px, 100dvh - 32px);
-    background: var(--blanco);
+    background: var(--fondo);
     border-radius: 36px;
-    box-shadow: 0 0 0 10px #10192B, 0 20px 50px rgba(11, 37, 69, .35);
+    box-shadow: 0 0 0 10px #0E1830, 0 24px 60px -12px rgba(19, 33, 60, .45);
     overflow: hidden;
   }
   @media (max-width: 500px) {
-    body { display: block; background: var(--blanco); }
+    body { display: block; background: var(--fondo); }
     .device { width: 100%; height: 100dvh; border-radius: 0; box-shadow: none; }
   }
 
   .screen {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 20px 20px 24px;
+    position: absolute; inset: 0;
+    display: none; flex-direction: column;
+    overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--borde-fuerte) transparent;
+    padding: 16px 20px 24px;
   }
-  .screen.activa { display: flex; animation: entrar .25s ease-out; }
-  @keyframes entrar { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+  .screen.activa { display: flex; animation: entrar .22s var(--salida); }
+  @keyframes entrar { from { transform: translateX(10px); } to { transform: none; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  /* Tipografía: escala fija de razón ~1.2 */
+  h1 { font-size: 26px; font-weight: 600; line-height: 1.15; letter-spacing: -.02em; text-wrap: balance; }
+  h2 { font-size: 22px; font-weight: 600; line-height: 1.2; letter-spacing: -.02em; margin-bottom: 6px; text-wrap: balance; }
+  .sub { color: var(--gris); font-size: 15px; margin-bottom: 20px; }
+  .seccion { font-weight: 600; font-size: 16px; margin: 20px 0 6px; }
 
   /* Encabezado con botón de volver */
-  .barra { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; min-height: 40px; }
+  .barra { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; min-height: 40px; }
   .atras {
-    width: 40px; height: 40px; border-radius: 50%;
-    background: var(--tarjeta); display: grid; place-items: center; flex: none;
+    width: 40px; height: 40px; border-radius: 50%; flex: none;
+    background: var(--superficie); border: 1px solid var(--borde);
+    display: grid; place-items: center; transition: background .15s;
   }
+  .atras:hover { background: var(--neutro); }
   .atras svg { width: 20px; height: 20px; }
-  .paso { font-size: 14px; color: var(--gris); font-weight: 600; }
-  .progreso { height: 6px; background: var(--tarjeta); border-radius: 3px; flex: 1; overflow: hidden; }
+  .paso { font-size: 14px; color: var(--gris); font-weight: 500; }
+  .progreso { height: 6px; background: var(--neutro); border-radius: 3px; flex: 1; overflow: hidden; }
   .progreso span { display: block; height: 100%; background: var(--naranja); border-radius: 3px; }
 
-  h1 { font-size: 28px; font-weight: 800; line-height: 1.15; }
-  h2 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
-  .sub { color: var(--gris); font-size: 15px; margin-bottom: 20px; }
-
+  /* Botones: una sola forma en toda la app */
   .boton {
-    width: 100%; padding: 16px; border-radius: 14px;
-    background: var(--naranja); color: var(--azul);
-    font-size: 17px; font-weight: 800; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 52px; padding: 0 20px; border-radius: var(--radio-control);
+    background: var(--naranja); color: var(--tinta);
+    font-size: 16px; font-weight: 600; text-align: center;
+    transition: background .15s, transform .15s;
   }
+  .boton:hover { background: var(--naranja-hover); }
   .boton:active { transform: scale(.98); }
-  .boton.secundario { background: var(--tarjeta); color: var(--azul); font-weight: 700; margin-top: 10px; }
-  .abajo { margin-top: auto; padding-top: 16px; }
+  .boton:disabled { opacity: .6; cursor: progress; transform: none; }
+  .boton.secundario { background: var(--neutro); margin-top: 10px; }
+  .boton.secundario:hover { background: #E5E1D8; }
+  .boton.contorno { background: transparent; border: 1.5px solid var(--tinta); }
+  .boton.contorno:hover { background: var(--neutro); }
+  .boton svg { width: 20px; height: 20px; }
+  .abajo { margin-top: auto; padding-top: 20px; }
   .acciones { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .acciones .boton.secundario { margin-top: 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .acciones svg { width: 20px; height: 20px; }
+  .acciones .boton.secundario { margin-top: 0; }
+  .enlace { color: var(--tinta); font-size: 14px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+  .enlace:hover { color: var(--naranja-texto); }
+
+  /* Marca */
+  .wordmark { font-weight: 600; letter-spacing: -.03em; line-height: 1; }
+  .wordmark span { color: var(--naranja); }
+  .app-icono { display: grid; place-items: center; border-radius: 16px; background: var(--naranja); color: var(--tinta); }
+  .app-icono svg { width: 84%; height: 84%; }
 
   /* Inicio de sesión (primera pantalla) */
-  #s-bienvenida { padding: 0; }
-  .marca { background: var(--azul); color: var(--blanco); text-align: center; padding: 28px 20px 60px; border-radius: 0 0 32px 32px; }
-  .marca .logo { width: 72px; height: 72px; margin: 0 auto 8px; display: block; }
-  .marca h1 { font-size: 30px; }
-  .marca .eslogan { font-size: 15px; margin-top: 4px; opacity: .9; }
+  #s-bienvenida, #s-registro { padding: 0; }
+  .marca { background: var(--tinta); color: var(--superficie); padding: 32px 24px 64px; }
+  .marca .app-icono { width: 56px; height: 56px; margin-bottom: 18px; }
+  .marca .wordmark { font-size: 38px; }
+  .marca .eslogan { font-size: 16px; margin-top: 10px; color: #C9D0DE; }
   .acceso {
-    margin: -36px 20px 0; padding: 0 20px 20px; text-align: center;
-    background: var(--blanco); border-radius: 24px; box-shadow: 0 10px 30px rgba(11, 37, 69, .12);
+    margin: -40px 16px 0; padding: 24px 20px 20px;
+    background: var(--superficie); border-radius: 16px; box-shadow: var(--sombra);
   }
-  .icono-usuario {
-    width: 60px; height: 60px; margin: 0 auto 6px; transform: translateY(-24px);
-    border-radius: 50%; border: 2px solid var(--azul); background: var(--blanco);
-    display: grid; place-items: center; color: var(--azul);
-  }
-  .icono-usuario svg { width: 30px; height: 30px; }
-  .acceso h2 { margin: -18px 0 14px; color: var(--azul); }
-  .campo { display: block; margin-bottom: 12px; }
-  .campo > span:first-child { display: block; font-size: 14px; font-weight: 600; color: var(--gris); margin-bottom: 6px; }
-  .con-ojo { display: block; }
+  .acceso h2 { margin-bottom: 18px; }
+  .campo { display: block; margin-bottom: 14px; }
+  .campo > span:first-child { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
   .campo input, .campo select {
-    width: 100%; padding: 13px 18px; border-radius: 99px; border: 2px solid var(--borde);
-    background: var(--blanco); font-size: 16px; outline: none;
+    width: 100%; height: 48px; padding: 0 14px; border-radius: var(--radio-control);
+    border: 1.5px solid var(--borde-fuerte); background: var(--superficie);
+    font-size: 16px; outline: none; transition: border-color .15s, box-shadow .15s;
   }
-  .campo input:focus, .campo select:focus { border-color: var(--naranja); }
-  .con-ojo { position: relative; }
-  .con-ojo input { padding-right: 52px; }
-  .ojo { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); width: 38px; height: 38px; display: grid; place-items: center; color: var(--gris); }
+  .campo input::placeholder { color: var(--placeholder); }
+  .campo input:hover, .campo select:hover { border-color: #B5AD9D; }
+  .campo input:focus, .campo select:focus { border-color: var(--tinta); box-shadow: 0 0 0 3px rgba(242, 140, 40, .35); }
+  .campo input[aria-invalid="true"] { border-color: var(--rojo); }
+  .con-ojo { display: block; position: relative; }
+  .con-ojo input { padding-right: 48px; }
+  .ojo { position: absolute; right: 4px; top: 4px; width: 40px; height: 40px; display: grid; place-items: center; color: var(--gris); border-radius: 10px; }
+  .ojo:hover { color: var(--tinta); }
   .ojo svg { width: 20px; height: 20px; }
-  .error { color: var(--rojo); font-size: 13px; font-weight: 700; min-height: 18px; margin: -4px 0 8px; }
-  .acceso .boton { border-radius: 99px; }
-  .fila-opciones { display: flex; justify-content: space-between; align-items: center; margin: 12px 2px 18px; font-size: 13px; }
-  .recordar { display: flex; align-items: center; gap: 6px; color: var(--azul); cursor: pointer; }
-  .recordar input { width: 16px; height: 16px; accent-color: var(--azul); }
-  .enlace { color: var(--azul); font-size: 13px; font-weight: 700; text-decoration: underline; }
-  .sin-cuenta { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--azul); margin-bottom: 8px; }
-  .boton.registro { width: auto; padding: 11px 32px; font-size: 15px; background: var(--azul); color: var(--blanco); }
-  .invitado { display: block; margin: 14px auto 0; color: var(--gris); }
-  .etiqueta-prototipo {
-    display: block; width: fit-content; margin: 16px auto 20px; padding: 4px 12px; border-radius: 99px;
-    border: 1px solid var(--borde); font-size: 11px; color: var(--gris);
-  }
-  #s-registro .acceso { margin: 0; padding: 0; box-shadow: none; text-align: left; }
-  #s-registro .campo > span:first-child { padding-left: 14px; }
-  .legal { font-size: 12px; color: var(--gris); text-align: center; margin-top: 10px; }
+  .error { color: var(--rojo); font-size: 14px; font-weight: 500; min-height: 20px; margin: -4px 0 8px; }
+  .fila-opciones { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 0; font-size: 14px; }
+  .recordar { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .recordar input { width: 18px; height: 18px; accent-color: var(--tinta); }
+  .separador { display: flex; align-items: center; gap: 12px; margin: 20px 0 14px; color: var(--gris); font-size: 14px; }
+  .separador::before, .separador::after { content: ""; flex: 1; height: 1px; background: var(--borde); }
+  .invitado { display: block; margin: 16px auto 0; }
+  .etiqueta-prototipo { display: block; text-align: center; margin: 18px 20px 24px; font-size: 12px; color: var(--gris); }
+  #s-registro .contenido { padding: 16px 20px 24px; }
+  #s-registro .acceso { margin: 0; padding: 0; box-shadow: none; background: none; }
+  .legal { font-size: 13px; color: var(--gris); text-align: center; margin-top: 12px; }
 
   /* Inicio */
   .ubicacion {
-    display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 18px;
-    border-radius: 14px; background: var(--tarjeta); font-size: 14px;
+    display: flex; align-items: center; gap: 12px; padding: 10px 14px; margin-bottom: 22px;
+    border-radius: var(--radio); background: var(--superficie); border: 1px solid var(--borde);
   }
-  .ubicacion svg { width: 20px; height: 20px; flex: none; color: var(--naranja); }
-  .ubicacion small { display: block; color: var(--gris); font-size: 12px; }
-  .ubicacion select { border: 0; background: none; font-weight: 800; font-size: 16px; padding: 0; width: 100%; cursor: pointer; }
-  .oficios { display: grid; gap: 12px; margin-bottom: 16px; }
+  .ubicacion > svg { width: 22px; height: 22px; color: var(--naranja-texto); }
+  .ubicacion small { display: block; color: var(--gris); font-size: 13px; }
+  .ubicacion select { border: 0; background: none; font-weight: 600; font-size: 16px; padding: 0; width: 100%; cursor: pointer; outline: none; }
+  .oficios { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; margin-bottom: 16px; }
   .oficio {
-    display: flex; align-items: center; gap: 14px; text-align: left;
-    padding: 16px; border-radius: var(--radio); background: var(--tarjeta);
-    font-size: 17px; font-weight: 700;
+    display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;
+    padding: 14px 16px; font-size: 16px; font-weight: 600; transition: background .15s;
   }
-  .oficio .icono { width: 48px; height: 48px; border-radius: 12px; background: var(--azul); display: grid; place-items: center; flex: none; }
-  .oficio .icono svg { width: 26px; height: 26px; }
-  .oficio small { display: block; font-size: 13px; font-weight: 400; color: var(--gris); }
+  .oficio + .oficio { border-top: 1px solid var(--borde); }
+  .oficio:hover { background: #FBFAF7; }
+  .oficio .icono { width: 44px; height: 44px; border-radius: 12px; background: var(--tinta); color: var(--naranja); display: grid; place-items: center; flex: none; }
+  .oficio .icono svg { width: 24px; height: 24px; }
+  .oficio > span:nth-child(2) { flex: 1; }
+  .oficio small { display: block; font-size: 14px; font-weight: 400; color: var(--gris); }
+  .oficio .chevron { width: 18px; height: 18px; color: var(--gris); }
   .emergencia {
-    width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--rojo);
-    color: #B3261E; font-weight: 800; font-size: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; min-height: 52px; border-radius: var(--radio-control);
+    border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; font-size: 16px;
+    transition: background .15s;
   }
+  .emergencia:hover { background: var(--rojo-claro); }
+  .emergencia svg { width: 20px; height: 20px; }
 
   /* Chips de filtro */
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
   .chip {
-    padding: 12px 16px; border-radius: 99px; border: 2px solid var(--borde);
-    font-size: 15px; font-weight: 700; background: var(--blanco);
+    min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--borde-fuerte);
+    font-size: 15px; font-weight: 500; background: var(--superficie); transition: border-color .15s, background .15s;
   }
-  .chip:active, .chip.sel { border-color: var(--naranja); background: #FFF1E6; }
+  .chip:hover { border-color: var(--tinta); }
+  .chip.sel { border-color: var(--naranja); background: var(--naranja-suave); }
 
   /* Lista de técnicos */
-  .resumen { display: inline-block; font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 99px; background: var(--tarjeta); margin-bottom: 8px; }
-  .orden { font-size: 13px; color: var(--gris); margin-bottom: 10px; }
+  .resumen { display: inline-block; align-self: flex-start; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 999px; background: var(--neutro); margin-bottom: 8px; }
+  .orden { font-size: 14px; color: var(--gris); margin-bottom: 14px; }
   .tarjeta {
     display: flex; gap: 12px; width: 100%; text-align: left;
-    padding: 14px; border-radius: var(--radio); border: 1px solid var(--borde); margin-bottom: 12px;
+    padding: 16px 14px; border-radius: var(--radio); border: 1px solid var(--borde); background: var(--superficie);
+    margin-bottom: 12px; transition: border-color .15s;
   }
-  .tarjeta:active { background: var(--tarjeta); }
+  .tarjeta:hover { border-color: var(--borde-fuerte); }
+  .tarjeta:active { background: #FBFAF7; }
   .avatar {
-    width: 56px; height: 56px; border-radius: 50%; flex: none;
-    display: grid; place-items: center; color: var(--blanco); font-weight: 800; font-size: 20px;
+    width: 52px; height: 52px; border-radius: 50%; flex: none;
+    display: grid; place-items: center; color: #FFFFFF; font-weight: 600; font-size: 18px;
   }
   .tarjeta .info { flex: 1; min-width: 0; }
-  .nombre { font-weight: 800; font-size: 16px; display: flex; align-items: center; gap: 6px; }
-  .verif { color: var(--verde); font-size: 12px; font-weight: 700; }
-  .insignia { display: inline-block; font-size: 11px; font-weight: 700; color: var(--azul); background: #FFE3CC; padding: 2px 8px; border-radius: 99px; margin: 4px 0; }
-  .datos { display: flex; justify-content: space-between; font-size: 13px; color: var(--gris); margin-top: 4px; }
-  .datos b { color: var(--azul); }
-  .destaca { font-size: 12px; font-weight: 700; color: var(--naranja); }
+  .nombre { font-weight: 600; font-size: 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .verif { display: inline-flex; align-items: center; gap: 4px; color: var(--verde); font-size: 13px; font-weight: 500; }
+  .verif svg { width: 16px; height: 16px; }
+  .insignia { display: inline-block; font-size: 13px; font-weight: 500; color: var(--naranja-texto); margin: 2px 0 6px; }
+  .datos { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 14px; color: var(--gris); margin-top: 2px; white-space: nowrap; }
+  .datos b { color: var(--tinta); font-weight: 600; }
+  .calif { display: inline-flex; align-items: center; gap: 4px; }
+  .destaca { font-size: 13px; font-weight: 600; color: var(--naranja-texto); }
+  .estrella { width: 16px; height: 16px; color: var(--borde-fuerte); }
+  .estrella.on { color: var(--naranja); }
 
   /* Perfil */
-  .perfil-cabeza { text-align: center; margin-bottom: 16px; }
-  .perfil-cabeza .avatar { width: 88px; height: 88px; font-size: 30px; margin: 0 auto 10px; }
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-  .stat { background: var(--tarjeta); border-radius: 12px; padding: 10px 6px; text-align: center; }
-  .stat b { display: block; font-size: 17px; }
-  .stat span { font-size: 12px; color: var(--gris); }
-  .caja { background: var(--verde-claro); border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
-  .caja strong { color: var(--verde); display: block; margin-bottom: 4px; }
-  .seccion { font-weight: 800; font-size: 16px; margin: 4px 0 8px; }
-  .resena { border-top: 1px solid var(--borde); padding: 10px 0; font-size: 14px; }
-  .resena .estrellas { color: var(--naranja); letter-spacing: 1px; }
-  .resena .quien { color: var(--gris); font-size: 12px; }
-  .completado { font-size: 11px; color: var(--verde); font-weight: 700; }
-  .linea { font-size: 14px; color: var(--gris); margin-bottom: 4px; }
+  .perfil-cabeza { text-align: center; margin-bottom: 18px; }
+  .perfil-cabeza .avatar { width: 84px; height: 84px; font-size: 28px; margin: 0 auto 12px; }
+  .perfil-cabeza .verif { margin-top: 4px; }
+  .hechos { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); margin-bottom: 14px; }
+  .hecho { padding: 12px 6px; text-align: center; }
+  .hecho + .hecho { border-left: 1px solid var(--borde); }
+  .hecho b { display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 18px; font-weight: 600; }
+  .hecho span { font-size: 13px; color: var(--gris); }
+  .caja { display: flex; gap: 12px; background: var(--verde-claro); border-radius: var(--radio-control); padding: 12px 14px; margin-bottom: 16px; font-size: 14px; }
+  .caja > svg { width: 22px; height: 22px; color: var(--verde); flex: none; margin-top: 1px; }
+  .caja strong { color: var(--verde); display: block; font-weight: 600; }
+  .detalles { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+  .detalles dt { color: var(--gris); }
+  .resena { border-top: 1px solid var(--borde); padding: 12px 0; font-size: 15px; }
+  .resena .cabeza { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .resena .estrellas { display: inline-flex; gap: 2px; }
+  .resena .quien { color: var(--gris); font-size: 13px; }
+  .completado { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--verde); font-weight: 500; }
+  .completado svg { width: 14px; height: 14px; }
 
-  /* Confirmación */
-  .filas { border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; margin-bottom: 12px; }
-  .fila { display: flex; justify-content: space-between; gap: 12px; padding: 14px; font-size: 15px; }
+  /* Confirmación y pago */
+  .filas { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); overflow: hidden; margin-bottom: 12px; }
+  .fila { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-size: 15px; }
   .fila + .fila { border-top: 1px solid var(--borde); }
   .fila span { color: var(--gris); }
-  .fila b { text-align: right; }
-  .garantia-chip { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--verde); background: var(--verde-claro); padding: 10px 14px; border-radius: 12px; }
+  .fila b { text-align: right; font-weight: 600; }
+  .fila small { display: block; font-weight: 400; color: var(--gris); font-size: 13px; }
+  .garantia-chip { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; color: var(--verde); background: var(--verde-claro); padding: 12px 14px; border-radius: var(--radio-control); }
+  .garantia-chip svg { width: 20px; height: 20px; flex: none; }
 
   /* Seguimiento */
-  .mapa { border-radius: var(--radio); overflow: hidden; margin-bottom: 16px; background: #EEF2EC; }
+  .mapa { border-radius: var(--radio); overflow: hidden; margin-bottom: 18px; border: 1px solid var(--borde); }
   .mapa svg { display: block; width: 100%; height: auto; }
-  .eta { font-size: 34px; font-weight: 800; }
-  .barra-llegada { height: 8px; background: var(--tarjeta); border-radius: 4px; overflow: hidden; margin: 10px 0 16px; }
+  .eta { font-size: 32px; font-weight: 600; letter-spacing: -.02em; }
+  .barra-llegada { height: 6px; background: var(--neutro); border-radius: 3px; overflow: hidden; margin: 12px 0 14px; }
   .barra-llegada span { display: block; height: 100%; width: 0; background: var(--naranja); }
   .barra-llegada.corre span { animation: llenar 6s linear forwards; }
   @keyframes llenar { to { width: 100%; } }
+  .linea { font-size: 15px; color: var(--gris); }
 
   /* Pago y garantía */
   .exito { text-align: center; margin: 8px 0 20px; }
-  .exito .circulo { width: 72px; height: 72px; border-radius: 50%; background: var(--verde-claro); display: grid; place-items: center; margin: 0 auto 12px; }
-  .calificar { display: flex; justify-content: center; gap: 6px; margin: 8px 0 18px; }
-  .calificar button { font-size: 36px; color: var(--borde); line-height: 1; }
+  .exito .circulo { width: 64px; height: 64px; border-radius: 50%; background: var(--verde-claro); color: var(--verde); display: grid; place-items: center; margin: 0 auto 14px; }
+  .exito .circulo svg { width: 32px; height: 32px; }
+  .calificar { display: flex; justify-content: center; gap: 4px; margin: 4px 0 8px; }
+  .calificar button { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 10px; color: var(--borde-fuerte); transition: color .15s, transform .15s; }
+  .calificar button svg { width: 34px; height: 34px; }
   .calificar button.on { color: var(--naranja); }
+  .calificar button:active { transform: scale(.9); }
   .sello {
-    margin: 4px auto 14px; width: 160px; height: 160px; border-radius: 50%;
-    border: 6px double var(--verde); color: var(--verde);
-    display: grid; place-items: center; text-align: center; transform: rotate(-8deg);
+    margin: 8px auto 18px; width: 152px; height: 152px; border-radius: 50%;
+    border: 5px double var(--verde); color: var(--verde);
+    display: grid; place-items: center; text-align: center; transform: rotate(-6deg);
   }
-  .sello b { font-size: 42px; line-height: 1; display: block; }
-  .sello span { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+  .sello b { font-size: 44px; font-weight: 700; line-height: 1; display: block; }
+  .sello span { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .centro { text-align: center; }
 
   /* Reportar */
-  .opcion { display: flex; align-items: center; gap: 12px; padding: 14px; border: 2px solid var(--borde); border-radius: 14px; margin-bottom: 10px; font-weight: 700; cursor: pointer; }
-  .opcion input { width: 20px; height: 20px; accent-color: var(--naranja); }
-  .opcion:has(input:checked) { border-color: var(--naranja); background: #FFF1E6; }
+  .opcion { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 1.5px solid var(--borde-fuerte); border-radius: var(--radio-control); background: var(--superficie); margin-bottom: 10px; font-weight: 500; cursor: pointer; }
+  .opcion input { width: 20px; height: 20px; accent-color: var(--tinta); }
+  .opcion:has(input:checked) { border-color: var(--naranja); background: var(--naranja-suave); }
   .recibido { display: none; }
 
   /* Chat con el técnico */
   #s-chat { padding: 0; }
-  .chat-cabeza { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--borde); background: var(--blanco); }
+  .chat-cabeza { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--borde); background: var(--superficie); }
   .chat-cabeza .avatar { width: 40px; height: 40px; font-size: 15px; }
-  .chat-cabeza b { display: block; font-size: 16px; }
-  .chat-cabeza small { color: var(--verde); font-size: 12px; font-weight: 700; }
-  .chat-cabeza .llamar-mini { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: var(--verde-claro); color: var(--verde); display: grid; place-items: center; }
-  .chat-cabeza .llamar-mini svg { width: 20px; height: 20px; }
-  .mensajes { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #F7F8FA; }
-  .burbuja { max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 15px; line-height: 1.35; }
-  .burbuja small { display: block; font-size: 11px; opacity: .6; margin-top: 2px; text-align: right; }
-  .burbuja.el { align-self: flex-start; background: var(--blanco); border: 1px solid var(--borde); border-bottom-left-radius: 4px; }
-  .burbuja.yo { align-self: flex-end; background: #FFE3CC; border-bottom-right-radius: 4px; }
-  .escribiendo { align-self: flex-start; font-size: 13px; color: var(--gris); font-style: italic; }
+  .chat-cabeza b { display: block; font-size: 16px; font-weight: 600; }
+  .en-linea { display: inline-flex; align-items: center; gap: 6px; color: var(--verde); font-size: 13px; }
+  .en-linea::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--verde); }
+  .llamar-mini { margin-left: auto; width: 40px; height: 40px; border-radius: 50%; background: var(--verde-claro); color: var(--verde); display: grid; place-items: center; }
+  .llamar-mini svg { width: 20px; height: 20px; }
+  .mensajes { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .burbuja { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 15px; line-height: 1.4; }
+  .burbuja small { display: block; font-size: 12px; color: var(--gris); margin-top: 2px; text-align: right; }
+  .burbuja.el { align-self: flex-start; background: var(--superficie); border: 1px solid var(--borde); border-bottom-left-radius: 4px; }
+  .burbuja.yo { align-self: flex-end; background: var(--naranja-suave); border-bottom-right-radius: 4px; }
+  .escribiendo { align-self: flex-start; font-size: 14px; color: var(--gris); }
   .rapidas { display: flex; gap: 8px; overflow-x: auto; padding: 10px 16px 0; scrollbar-width: none; }
-  .rapidas .chip { padding: 8px 12px; font-size: 13px; white-space: nowrap; flex: none; }
+  .rapidas .chip { min-height: 36px; padding: 0 12px; font-size: 14px; white-space: nowrap; flex: none; }
   .escribir { display: flex; gap: 8px; padding: 10px 16px 16px; }
-  .escribir input { flex: 1; min-width: 0; padding: 12px 16px; border-radius: 99px; border: 2px solid var(--borde); outline: none; font-size: 15px; }
-  .escribir input:focus { border-color: var(--naranja); }
-  .escribir button { width: 46px; height: 46px; border-radius: 50%; background: var(--naranja); display: grid; place-items: center; flex: none; }
+  .escribir input { flex: 1; min-width: 0; height: 46px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--borde-fuerte); background: var(--superficie); outline: none; font-size: 15px; }
+  .escribir input::placeholder { color: var(--placeholder); }
+  .escribir input:focus { border-color: var(--tinta); }
+  .escribir button { width: 46px; height: 46px; border-radius: 50%; background: var(--naranja); color: var(--tinta); display: grid; place-items: center; flex: none; }
+  .escribir button:hover { background: var(--naranja-hover); }
   .escribir button svg { width: 20px; height: 20px; }
 
   /* Llamada simulada */
-  #s-llamada { background: var(--azul); color: var(--blanco); text-align: center; }
-  #s-llamada .avatar { width: 112px; height: 112px; font-size: 38px; margin: 48px auto 16px; border: 4px solid rgba(255,255,255,.25); }
+  #s-llamada { background: var(--tinta); color: #FFFFFF; text-align: center; }
+  #s-llamada .avatar { width: 112px; height: 112px; font-size: 38px; margin: 48px auto 18px; }
   #s-llamada h2 { font-size: 26px; }
-  .estado-llamada { font-size: 16px; opacity: .85; }
+  .estado-llamada { font-size: 16px; color: #C9D0DE; }
   .controles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: auto; padding: 0 8px 12px; }
-  .control { display: grid; justify-items: center; gap: 8px; font-size: 13px; }
-  .control span:first-child { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,.14); display: grid; place-items: center; }
+  .control { display: grid; justify-items: center; gap: 8px; font-size: 14px; color: #FFFFFF; }
+  .control span:first-child { width: 64px; height: 64px; border-radius: 50%; background: rgba(255, 255, 255, .12); display: grid; place-items: center; transition: background .15s; }
+  .control:hover span:first-child { background: rgba(255, 255, 255, .2); }
   .control svg { width: 26px; height: 26px; }
-  .control.on span:first-child { background: var(--blanco); color: var(--azul); }
+  .control.on span:first-child { background: #FFFFFF; color: var(--tinta); }
   .control.colgar span:first-child { background: var(--rojo); }
-  .nota-simulada { font-size: 12px; opacity: .6; margin-bottom: 8px; }
-  #s-llamada .atras { background: rgba(255,255,255,.14); }
-  .latido { animation: latido 1.2s ease-in-out infinite; }
-  @keyframes latido { 50% { box-shadow: 0 0 0 14px rgba(255,107,0,.25); } }
+  .nota-simulada { font-size: 13px; color: #A9B3C7; margin-bottom: 8px; }
+  #s-llamada .atras { background: rgba(255, 255, 255, .12); border-color: transparent; color: #FFFFFF; }
+  .timbrando { animation: timbre 1.4s var(--salida) infinite; }
+  @keyframes timbre { 0% { box-shadow: 0 0 0 0 rgba(242, 140, 40, .45); } 100% { box-shadow: 0 0 0 22px rgba(242, 140, 40, 0); } }
 
-  /* Aviso del reto de 60 segundos */
+  /* Aviso (reto de 60 segundos, cuenta creada, etc.) */
   .aviso {
     position: absolute; left: 16px; right: 16px; top: 16px; z-index: 5;
-    background: var(--azul); color: var(--blanco); border-radius: 14px; padding: 14px 16px;
-    font-weight: 700; font-size: 15px; box-shadow: 0 8px 24px rgba(11,37,69,.3);
+    background: var(--tinta); color: #FFFFFF; border-radius: var(--radio); padding: 14px 16px;
+    font-weight: 600; font-size: 15px; box-shadow: var(--sombra);
     transform: translateY(calc(-100% - 32px)); visibility: hidden;
-    transition: transform .3s, visibility .3s;
+    transition: transform .25s var(--salida), visibility .25s;
   }
   .aviso.ver { transform: none; visibility: visible; }
-  .aviso small { display: block; font-weight: 400; opacity: .85; }
+  .aviso small { display: block; font-weight: 400; color: #C9D0DE; font-size: 14px; }
 </style>
 </head>
 <body>
@@ -291,36 +352,43 @@
 
   <div class="aviso" id="aviso" role="status"></div>
 
-  <!-- Ícono reutilizado por todos los botones de volver -->
+  <!-- Íconos dibujados: un solo trazo de 2px en toda la app -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-marca" viewBox="0 0 64 64">
+      <!-- Llave inglesa con el mango en forma de rayo: "repara al instante" -->
+      <mask id="ranura-llave" maskUnits="userSpaceOnUse" x="-20" y="-20" width="104" height="104">
+        <rect x="-20" y="-20" width="104" height="104" fill="#FFFFFF"/>
+        <rect x="26.5" y="-4" width="11" height="16" rx="1.5" fill="#000000"/>
+      </mask>
+      <g transform="translate(32 32) scale(.8) rotate(45) translate(-32 -33.5)">
+        <g fill="currentColor">
+          <circle cx="32" cy="14" r="13" mask="url(#ranura-llave)"/>
+          <rect x="25" y="23" width="14" height="10" rx="3"/>
+        </g>
+        <path d="M35 31 29.5 44.5H37L31.5 58v8" fill="none" stroke="var(--rayo, currentColor)" stroke-width="8" stroke-linejoin="miter" stroke-miterlimit="3" stroke-linecap="round"/>
+      </g>
+    </symbol>
+    <symbol id="i-atras" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-tel" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.8 7L4 20l1.1-4.6A8 8 0 1 1 21 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+    <symbol id="i-estrella" viewBox="0 0 24 24"><path d="M12 2.8l2.8 5.8 6.3.9-4.6 4.4 1.1 6.3L12 17.2l-5.6 3 1.1-6.3-4.6-4.4 6.3-.9z" fill="currentColor"/></symbol>
+    <symbol id="i-verificado" viewBox="0 0 24 24"><path d="M12 2l2.4 1.8 3-.2 1 2.8 2.5 1.7-.9 2.9.9 2.9-2.5 1.7-1 2.8-3-.2L12 22l-2.4-1.8-3 .2-1-2.8-2.5-1.7.9-2.9-.9-2.9 2.5-1.7 1-2.8 3 .2z" fill="currentColor"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 3l7 3v5.5c0 4.4-3 8-7 9.5-4-1.5-7-5.1-7-9.5V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.5l9.5 16.5h-19z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4.5M12 17.3v.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+    <symbol id="i-ubicacion" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="9.5" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
   </svg>
 
   <!-- 1. Inicio de sesión (primera pantalla: no tiene a dónde volver) -->
   <section class="screen activa" id="s-bienvenida">
     <div class="marca">
-    <svg class="logo" viewBox="0 0 120 120" aria-hidden="true">
-      <circle cx="60" cy="60" r="52" fill="none" stroke="#FFFFFF" stroke-width="8"/>
-      <g stroke="#FFFFFF" stroke-width="4" stroke-linecap="round">
-        <line x1="60" y1="14" x2="60" y2="22"/><line x1="106" y1="60" x2="98" y2="60"/>
-        <line x1="60" y1="106" x2="60" y2="98"/><line x1="14" y1="60" x2="22" y2="60"/>
-      </g>
-      <!-- Manecilla corta en forma de llave inglesa -->
-      <g transform="rotate(-50 60 60)">
-        <rect x="56" y="30" width="8" height="32" rx="4" fill="#FF6B00"/>
-        <path d="M60 18a12 12 0 1 0 0.01 0zM55 18h10v10H55z" fill="#FF6B00" fill-rule="evenodd"/>
-      </g>
-      <!-- Manecilla larga -->
-      <rect x="57" y="58" width="6" height="36" rx="3" fill="#FFFFFF" transform="rotate(120 60 60)"/>
-      <circle cx="60" cy="60" r="7" fill="#FF6B00"/>
-    </svg>
-    <h1>InstaFix</h1>
-    <p class="eslogan">Llega, cobra lo justo, responde.</p>
+      <div class="app-icono"><svg><use href="#i-marca"/></svg></div>
+      <h1 class="wordmark">Insta<span>Fix</span></h1>
+      <p class="eslogan">Llega, cobra lo justo, responde.</p>
     </div>
     <form class="acceso" id="form-login" novalidate>
-      <div class="icono-usuario"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></div>
       <h2>Iniciar sesión</h2>
       <label class="campo"><span>Correo o teléfono</span>
         <input id="login-usuario" type="text" autocomplete="username" placeholder="correo@ejemplo.com">
@@ -328,75 +396,80 @@
       <label class="campo"><span>Contraseña</span>
         <span class="con-ojo">
           <input id="login-clave" type="password" autocomplete="current-password" placeholder="Tu contraseña">
-          <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg><use href="#i-ojo"/></svg></button>
         </span>
       </label>
       <p class="error" id="login-error" role="alert"></p>
-      <button type="submit" class="boton">Iniciar sesión</button>
+      <button type="submit" class="boton" id="boton-login">Iniciar sesión</button>
       <div class="fila-opciones">
         <label class="recordar"><input type="checkbox" id="recordar"> Recordarme</label>
         <button type="button" class="enlace" data-accion="olvide">¿Olvidaste tu contraseña?</button>
       </div>
-      <p class="sin-cuenta">¿No tienes cuenta?</p>
-      <button type="button" class="boton registro" data-ir="s-registro">Regístrate ahora</button>
+      <p class="separador">¿No tienes cuenta?</p>
+      <button type="button" class="boton contorno" data-ir="s-registro">Crear cuenta</button>
       <button type="button" class="enlace invitado" data-accion="invitado">Entrar como invitado</button>
     </form>
-    <span class="etiqueta-prototipo">Prototipo – datos de ejemplo · no se guarda ninguna contraseña</span>
+    <p class="etiqueta-prototipo">Prototipo con datos de ejemplo. No se guarda ninguna contraseña.</p>
   </section>
 
   <!-- 1b. Registro -->
   <section class="screen" id="s-registro">
-    <div class="barra">
-      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <span class="paso">Crear cuenta</span>
+    <div class="contenido">
+      <div class="barra">
+        <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+        <span class="paso">Crear cuenta</span>
+      </div>
+      <h2>Crea tu cuenta</h2>
+      <p class="sub">Solo te toma un minuto. Así el técnico sabe a dónde llegar.</p>
+      <form class="acceso" id="form-registro" novalidate>
+        <label class="campo"><span>Nombre completo</span><input id="reg-nombre" type="text" autocomplete="name" placeholder="María Pérez"></label>
+        <label class="campo"><span>Teléfono</span><input id="reg-telefono" type="tel" autocomplete="tel" placeholder="6000-0000"></label>
+        <label class="campo"><span>Correo</span><input id="reg-correo" type="email" autocomplete="email" placeholder="correo@ejemplo.com"></label>
+        <label class="campo"><span>Contraseña</span>
+          <span class="con-ojo">
+            <input id="reg-clave" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+            <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg><use href="#i-ojo"/></svg></button>
+          </span>
+        </label>
+        <label class="campo"><span>Barrio en Ciudad de Panamá</span><select id="reg-barrio"></select></label>
+        <p class="error" id="registro-error" role="alert"></p>
+        <button type="submit" class="boton" id="boton-registro">Crear cuenta</button>
+        <p class="legal">Prototipo: los datos no se guardan ni se envían.</p>
+      </form>
     </div>
-    <h2>Crea tu cuenta</h2>
-    <p class="sub">Solo te toma un minuto. Así el técnico sabe a dónde llegar.</p>
-    <form class="acceso" id="form-registro" novalidate>
-      <label class="campo"><span>Nombre completo</span><input id="reg-nombre" type="text" autocomplete="name" placeholder="María Pérez"></label>
-      <label class="campo"><span>Teléfono</span><input id="reg-telefono" type="tel" autocomplete="tel" placeholder="6000-0000"></label>
-      <label class="campo"><span>Correo</span><input id="reg-correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com"></label>
-      <label class="campo"><span>Contraseña</span>
-        <span class="con-ojo">
-          <input id="reg-clave" type="password" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
-          <button type="button" class="ojo" data-accion="ver-clave" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button>
-        </span>
-      </label>
-      <label class="campo"><span>Barrio · Ciudad de Panamá</span><select id="reg-barrio"></select></label>
-      <p class="error" id="registro-error" role="alert"></p>
-      <button type="submit" class="boton">Crear cuenta</button>
-      <p class="legal">Prototipo: los datos no se guardan ni se envían.</p>
-    </form>
   </section>
 
   <!-- 2. Inicio -->
   <section class="screen" id="s-inicio">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <span class="paso" data-texto="saludo">Hola, ¿en qué te ayudamos?</span>
+      <span class="paso" data-texto="saludo">Hola</span>
     </div>
     <label class="ubicacion">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-      <span style="flex:1"><small>Tu ubicación · Ciudad de Panamá</small><select id="barrio" aria-label="Barrio"></select></span>
+      <svg><use href="#i-ubicacion"/></svg>
+      <span style="flex:1"><small>Tu ubicación en Ciudad de Panamá</small><select id="barrio" aria-label="Barrio"></select></span>
     </label>
     <h1>¿Qué se dañó?</h1>
     <p class="sub">Técnicos verificados, con precio antes de confirmar.</p>
     <div class="oficios">
       <button class="oficio" data-oficio="Plomería">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
         <span>Plomería<small>Tuberías, inodoros, bombas</small></span>
+        <svg class="chevron"><use href="#i-chevron"/></svg>
       </button>
       <button class="oficio" data-oficio="Electricidad">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
         <span>Electricidad<small>Tableros, cortos, instalaciones</small></span>
+        <svg class="chevron"><use href="#i-chevron"/></svg>
       </button>
       <button class="oficio" data-oficio="Aire acondicionado">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.9 6.9l14.2 10.2M19.1 6.9 4.9 17.1M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span>
+        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.9 6.9l14.2 10.2M19.1 6.9 4.9 17.1M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span>
         <span>Aire acondicionado<small>Split, ventana, mantenimiento</small></span>
+        <svg class="chevron"><use href="#i-chevron"/></svg>
       </button>
     </div>
     <div class="abajo">
-      <button class="emergencia" data-accion="emergencia">🚨 Emergencia</button>
+      <button class="emergencia" data-accion="emergencia"><svg><use href="#i-alerta"/></svg>Emergencia</button>
     </div>
   </section>
 
@@ -485,7 +558,7 @@
     <h2>Confirma tu servicio</h2>
     <p class="sub">Revisa antes de pedir. Pagas al terminar.</p>
     <div class="filas" id="confirmacion-filas"></div>
-    <div class="garantia-chip">✓ Incluye garantía de 15 días</div>
+    <div class="garantia-chip"><svg><use href="#i-escudo"/></svg>Incluye garantía de 15 días</div>
     <div class="abajo">
       <button class="boton" data-accion="confirmar">Confirmar</button>
       <button class="boton secundario" data-accion="cambiar">Cambiar técnico</button>
@@ -499,9 +572,9 @@
       <span class="paso">Servicio en curso</span>
     </div>
     <h2 data-texto="camino"></h2>
-    <p class="sub" data-texto="ruta"></p>
+    <p class="sub num" data-texto="ruta"></p>
     <div class="mapa" id="mapa"></div>
-    <div class="eta" data-texto="eta"></div>
+    <div class="eta num" data-texto="eta"></div>
     <div class="barra-llegada" id="barra-llegada"><span></span></div>
     <p class="linea" data-texto="vehiculo"></p>
     <div class="abajo acciones">
@@ -516,13 +589,13 @@
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
     </div>
     <div class="exito">
-      <div class="circulo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E8E4E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+      <div class="circulo"><svg><use href="#i-check"/></svg></div>
       <h2>¡Listo! Tu servicio quedó hecho</h2>
     </div>
-    <div class="filas" id="pago-filas"></div>
-    <p class="seccion" style="text-align:center" data-texto="como"></p>
+    <div class="filas num" id="pago-filas"></div>
+    <p class="seccion centro" data-texto="como"></p>
     <div class="calificar" id="calificar">
-      <button aria-label="1 estrella">★</button><button aria-label="2 estrellas">★</button><button aria-label="3 estrellas">★</button><button aria-label="4 estrellas">★</button><button aria-label="5 estrellas">★</button>
+      <button aria-label="1 estrella"><svg><use href="#i-estrella"/></svg></button><button aria-label="2 estrellas"><svg><use href="#i-estrella"/></svg></button><button aria-label="3 estrellas"><svg><use href="#i-estrella"/></svg></button><button aria-label="4 estrellas"><svg><use href="#i-estrella"/></svg></button><button aria-label="5 estrellas"><svg><use href="#i-estrella"/></svg></button>
     </div>
     <div class="abajo"><button class="boton" data-accion="pagar">Pagar y calificar</button></div>
   </section>
@@ -532,10 +605,10 @@
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
     </div>
-    <h2 style="text-align:center">Garantía activa</h2>
+    <h2 class="centro">Garantía activa</h2>
     <div class="sello"><div><b>15</b><span>días de<br>garantía</span></div></div>
-    <p class="sub" style="text-align:center" data-texto="vence"></p>
-    <div class="caja"><strong>Si algo falla</strong><span data-texto="promesa"></span></div>
+    <p class="sub centro" data-texto="vence"></p>
+    <div class="caja"><svg><use href="#i-escudo"/></svg><div><strong>Si algo falla</strong><span data-texto="promesa"></span></div></div>
     <div class="acciones">
       <button class="boton secundario" data-ir="s-llamada"><svg><use href="#i-tel"/></svg>Llamar</button>
       <button class="boton secundario" data-ir="s-chat"><svg><use href="#i-chat"/></svg>Mensaje</button>
@@ -560,10 +633,10 @@
     </div>
     <div class="recibido" id="reporte-recibido">
       <div class="exito">
-        <div class="circulo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1E8E4E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></div>
+        <div class="circulo"><svg><use href="#i-check"/></svg></div>
         <h2>Recibido</h2>
       </div>
-      <p class="sub" style="text-align:center" data-texto="reporte"></p>
+      <p class="sub centro" data-texto="reporte"></p>
     </div>
     <div class="abajo">
       <button class="boton" id="enviar-reporte" data-accion="reportar">Enviar reporte</button>
@@ -576,7 +649,7 @@
     <div class="chat-cabeza">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
       <span class="avatar" id="chat-avatar"></span>
-      <span><b data-texto="chat-nombre"></b><small>● En línea</small></span>
+      <span><b data-texto="chat-nombre"></b><span class="en-linea">En línea</span></span>
       <button class="llamar-mini" data-ir="s-llamada" aria-label="Llamar"><svg><use href="#i-tel"/></svg></button>
     </div>
     <div class="mensajes" id="mensajes"></div>
@@ -588,7 +661,7 @@
     </div>
     <form class="escribir" id="form-chat">
       <input id="texto-chat" placeholder="Escribe un mensaje" autocomplete="off" aria-label="Mensaje">
-      <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="#0B2545" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
+      <button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg></button>
     </form>
   </section>
 
@@ -597,9 +670,9 @@
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
     </div>
-    <span class="avatar latido" id="llamada-avatar"></span>
+    <span class="avatar" id="llamada-avatar"></span>
     <h2 data-texto="llamada-nombre"></h2>
-    <p class="estado-llamada" id="estado-llamada">Llamando…</p>
+    <p class="estado-llamada num" id="estado-llamada">Llamando…</p>
     <div class="controles">
       <button class="control" data-control="silencio"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5M3 3l18 18"/></svg></span><span>Silenciar</span></button>
       <button class="control" data-control="altavoz"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg></span><span>Altavoz</span></button>
@@ -632,38 +705,38 @@
   // Datos de ejemplo (pestaña "Fase 2 — Datos de ejemplo" del plan)
   const TECNICOS = [
     {
-      id: 'carlos', nombre: 'Carlos Méndez', iniciales: 'CM', color: '#0B2545', base: 'El Cangrejo',
+      id: 'carlos', nombre: 'Carlos Méndez', iniciales: 'CM', color: '#13213C', base: 'El Cangrejo',
       zona: 'El Cangrejo, Bella Vista y Obarrio', estrellas: '4,8', resenas: 126, servicios: 140,
       puntualidad: '96 %', precio: '$45 – $70', total: '$55', anios: 8, marcas: 'LG, Samsung, Marca X',
       horario: 'Lun–Sáb, 7:00–18:00', vehiculo: 'Moto gris', fuerte: 'Muy puntual',
       verificacion: 'cédula, foto y 3 referencias',
       opiniones: [
-        ['★★★★★', 'Llegó a la hora que dijo la app y el aire quedó enfriando el mismo día.', 'María P., Bella Vista'],
-        ['★★★★★', 'Cobró lo que marcaba el rango. Me explicó qué tenía el equipo.', 'Jorge L., Obarrio'],
-        ['★★★★☆', 'Buen trabajo, solo tardó un poco en conseguir el repuesto.', 'Daniela R., Marbella']
+        [5, 'Llegó a la hora que dijo la app y el aire quedó enfriando el mismo día.', 'María P., Bella Vista'],
+        [5, 'Cobró lo que marcaba el rango. Me explicó qué tenía el equipo.', 'Jorge L., Obarrio'],
+        [4, 'Buen trabajo, solo tardó un poco en conseguir el repuesto.', 'Daniela R., Marbella']
       ]
     },
     {
-      id: 'ana', nombre: 'Ana Rodríguez', iniciales: 'AR', color: '#1E8E4E', base: 'San Francisco',
+      id: 'ana', nombre: 'Ana Rodríguez', iniciales: 'AR', color: '#17784A', base: 'San Francisco',
       zona: 'San Francisco, Punta Paitilla y Costa del Este', estrellas: '4,9', resenas: 212, servicios: 230,
       puntualidad: '98 %', precio: '$50 – $80', total: '$65', anios: 12, marcas: 'Carrier, Daikin, Marca X',
       horario: 'Lun–Vie, 8:00–17:00', vehiculo: 'Carro blanco', fuerte: 'Mejor calificada',
       verificacion: 'cédula, foto, 4 referencias y certificado técnico',
       opiniones: [
-        ['★★★★★', 'Conoce la marca a fondo; encontró la falla en diez minutos.', 'Roberto S., Costa del Este'],
-        ['★★★★★', 'Muy ordenada, dejó todo limpio. La volvería a llamar.', 'Carmen V., San Francisco'],
-        ['★★★★★', 'El aire volvió a fallar a la semana y regresó sin cobrar, como dice la garantía.', 'Pedro A., Punta Paitilla']
+        [5, 'Conoce la marca a fondo; encontró la falla en diez minutos.', 'Roberto S., Costa del Este'],
+        [5, 'Muy ordenada, dejó todo limpio. La volvería a llamar.', 'Carmen V., San Francisco'],
+        [5, 'El aire volvió a fallar a la semana y regresó sin cobrar, como dice la garantía.', 'Pedro A., Punta Paitilla']
       ]
     },
     {
-      id: 'luis', nombre: 'Luis Herrera', iniciales: 'LH', color: '#C2410C', base: 'Betania',
+      id: 'luis', nombre: 'Luis Herrera', iniciales: 'LH', color: '#A9520A', base: 'Betania',
       zona: 'Betania, El Dorado y Condado del Rey', estrellas: '4,6', resenas: 58, servicios: 64,
       puntualidad: '91 %', precio: '$40 – $60', total: '$48', anios: 4, marcas: 'Midea, Marca X',
       horario: 'Lun–Dom, 8:00–20:00', vehiculo: 'Moto roja', fuerte: 'Precio más bajo',
       verificacion: 'cédula, foto y 2 referencias',
       opiniones: [
-        ['★★★★★', 'El más económico y resolvió rápido.', 'Sofía G., El Dorado'],
-        ['★★★★☆', 'Amable y cumplido. Llegó un poco tarde, pero avisó por la app.', 'Andrés M., Betania']
+        [5, 'El más económico y resolvió rápido.', 'Sofía G., El Dorado'],
+        [4, 'Amable y cumplido. Llegó un poco tarde, pero avisó por la app.', 'Andrés M., Betania']
       ]
     }
   ];
@@ -677,6 +750,11 @@
   const $ = sel => document.querySelector(sel);
   const texto = (clave, valor) => document.querySelectorAll(`[data-texto="${clave}"]`).forEach(el => { el.textContent = valor; });
   const nombreCorto = t => t.nombre.split(' ')[0];
+
+  // Íconos reutilizables dentro del HTML que se arma con datos
+  const icono = (id, clase = '') => `<svg class="${clase}" aria-hidden="true"><use href="#${id}"/></svg>`;
+  const estrellas = n => Array.from({ length: 5 }, (_, i) => icono('i-estrella', i < n ? 'estrella on' : 'estrella')).join('');
+  const verificado = `<span class="verif">${icono('i-verificado')}Verificado</span>`;
 
   // Distancia en km entre dos barrios y tiempo estimado de llegada con tráfico
   function km(a, b) {
@@ -722,26 +800,33 @@
   function dibujarMapa(t) {
     const p = b => { const [la, lo] = BARRIOS[b]; return [(lo + 79.6) / 0.16 * 350, (9.055 - la) / 0.115 * 220]; };
     const [x1, y1] = p(t.base), [x2, y2] = p(estado.barrio);
-    const puntos = Object.keys(BARRIOS).map(b => { const [x, y] = p(b); return `<circle cx="${x}" cy="${y}" r="3" fill="#B8C2CC"/>`; }).join('');
-    // Etiqueta arriba del punto, o debajo si chocaría con la del cliente
-    const etiqueta = (x, y, txt, color, abajo) => {
-      const ancho = txt.length * 6.4 + 12, izq = Math.min(Math.max(x - ancho / 2, 4), 346 - ancho), arriba = abajo ? y + 14 : y - 32;
-      return `<rect x="${izq}" y="${arriba}" width="${ancho}" height="18" rx="9" fill="${color}"/><text x="${izq + ancho / 2}" y="${arriba + 13}" text-anchor="middle" font-size="11" font-weight="700" fill="#FFFFFF">${txt}</text>`;
+    const puntos = Object.keys(BARRIOS).map(b => { const [x, y] = p(b); return `<circle cx="${x}" cy="${y}" r="3" fill="#C9C2B3"/>`; }).join('');
+    // Cada etiqueta va arriba de su punto; si las dos chocan, la del punto más bajo pasa debajo
+    const caja = (x, y, txt, abajo) => {
+      const ancho = txt.length * 6.4 + 14;
+      return { izq: Math.min(Math.max(x - ancho / 2, 4), 346 - ancho), arriba: abajo ? y + 14 : y - 32, ancho };
     };
-    const tecnicoAbajo = Math.abs(y1 - y2) < 26;
+    const textoCliente = 'Tú · ' + estado.barrio;
+    const a = caja(x1, y1, t.base, false), b = caja(x2, y2, textoCliente, false);
+    const chocan = a.izq < b.izq + b.ancho && b.izq < a.izq + a.ancho && Math.abs(a.arriba - b.arriba) < 24;
+    const tecnicoAbajo = chocan && y1 > y2, clienteAbajo = chocan && y2 >= y1;
+    const etiqueta = (x, y, txt, fondo, tinta, abajo) => {
+      const { izq, arriba, ancho } = caja(x, y, txt, abajo);
+      return `<rect x="${izq}" y="${arriba}" width="${ancho}" height="20" rx="6" fill="${fondo}"/><text x="${izq + ancho / 2}" y="${arriba + 14}" text-anchor="middle" font-family="Rubik, system-ui, sans-serif" font-size="11" font-weight="600" fill="${tinta}">${txt}</text>`;
+    };
     const cx = (x1 + x2) / 2, cy = Math.min(y1, y2) - 24;
     $('#mapa').innerHTML = `
       <svg viewBox="0 0 350 220" role="img" aria-label="Ruta de ${t.base} a ${estado.barrio}">
-        <rect width="350" height="220" fill="#EEF2EC"/>
-        <path d="M95 220 L118 200 L140 176 L172 158 L205 150 L245 132 L300 92 L350 84 L350 220 Z" fill="#CFE3F2"/>
-        <text x="335" y="204" text-anchor="end" font-size="11" fill="#5B7FA0" font-style="italic">Bahía de Panamá</text>
-        <text x="8" y="16" font-size="10" fill="#5B6575">Ciudad de Panamá · mapa de ejemplo</text>
+        <rect width="350" height="220" fill="#EFECE4"/>
+        <path d="M95 220 L118 200 L140 176 L172 158 L205 150 L245 132 L300 92 L350 84 L350 220 Z" fill="#D3E3EE"/>
+        <text x="335" y="204" text-anchor="end" font-family="Rubik, system-ui, sans-serif" font-size="11" fill="#4F6F8C">Bahía de Panamá</text>
+        <text x="10" y="18" font-family="Rubik, system-ui, sans-serif" font-size="10" fill="#565F73">Ciudad de Panamá · mapa de ejemplo</text>
         ${puntos}
-        <path d="M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}" fill="none" stroke="#FF6B00" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 8"/>
-        <circle cx="${x1}" cy="${y1}" r="8" fill="#0B2545"/>
-        <circle cx="${x2}" cy="${y2}" r="9" fill="#FF6B00" stroke="#FFFFFF" stroke-width="3"/>
-        ${etiqueta(x1, y1, t.base, '#0B2545', tecnicoAbajo)}
-        ${etiqueta(x2, y2, 'Tú · ' + estado.barrio, '#FF6B00', false)}
+        <path d="M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}" fill="none" stroke="#F28C28" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 8"/>
+        <circle cx="${x1}" cy="${y1}" r="8" fill="#13213C"/>
+        <circle cx="${x2}" cy="${y2}" r="9" fill="#F28C28" stroke="#FFFFFF" stroke-width="3"/>
+        ${etiqueta(x1, y1, t.base, '#13213C', '#FFFFFF', tecnicoAbajo)}
+        ${etiqueta(x2, y2, textoCliente, '#F28C28', '#13213C', clienteAbajo)}
       </svg>`;
   }
 
@@ -749,7 +834,7 @@
   function respuesta(msg, t) {
     const m = msg.toLowerCase();
     if (/falta|cu[aá]nto.*(tarda|demora)|llegas|d[oó]nde/.test(m)) return `Voy saliendo de ${t.base}, estoy a unos ${minutos(t)} minutos de ${estado.barrio}.`;
-    if (/piso|apto|edificio|casa|direcci|port[oó]n/.test(m)) return 'Perfecto, anotado. Te aviso cuando esté abajo. 👍';
+    if (/piso|apto|edificio|casa|direcci|port[oó]n/.test(m)) return 'Perfecto, anotado. Te aviso cuando esté abajo.';
     if (/precio|cuesta|costar|cobr|pago/.test(m)) return `El rango es ${t.precio} sin repuestos. Al revisar el equipo te confirmo antes de empezar.`;
     if (/gracias/.test(m)) return '¡A la orden! Nos vemos ahorita.';
     if (/hola|buenas/.test(m)) return '¡Hola! ¿En qué te ayudo?';
@@ -760,7 +845,7 @@
     const t = estado.tecnico, lista = estado.chats[t.id];
     $('#mensajes').innerHTML = lista.map(m => m.escribiendo
       ? `<span class="escribiendo">${nombreCorto(t)} está escribiendo…</span>`
-      : `<div class="burbuja ${m.de}">${m.texto}<small>${m.hora}</small></div>`).join('');
+      : `<div class="burbuja ${m.de}">${m.texto}<small class="num">${m.hora}</small></div>`).join('');
     $('#mensajes').scrollTop = $('#mensajes').scrollHeight;
   }
 
@@ -786,15 +871,15 @@
     if (id === 's-lista') {
       const lista = ordenados();
       texto('resumen', `${estado.tipo} · ${estado.aparato} · ${estado.marca}`);
-      texto('orden', `Cerca de ${estado.barrio} · ordenados por el que llega primero`);
+      texto('orden', `Cerca de ${estado.barrio}, ordenados por el que llega primero`);
       $('#lista-tecnicos').innerHTML = lista.map((x, i) => `
         <button class="tarjeta" data-tecnico="${x.id}">
           <span class="avatar" style="background:${x.color}">${x.iniciales}</span>
           <span class="info">
-            <span class="nombre">${x.nombre} <span class="verif">✓ Verificado</span></span>
+            <span class="nombre">${x.nombre} ${verificado}</span>
             <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span>
-            <span class="datos"><span>★ <b>${x.estrellas}</b> (${x.resenas})</span><span><b>${x.precio}</b></span></span>
-            <span class="datos"><span>Llega en <b>${minutos(x)} min</b> · ${distancia(x)} km</span><span class="destaca">${i === 0 ? 'Llega primero' : x.fuerte}</span></span>
+            <span class="datos num"><span class="calif">${icono('i-estrella', 'estrella on')}<b>${x.estrellas}</b> (${x.resenas})</span><span class="destaca">${i === 0 ? 'Llega primero' : x.fuerte}</span></span>
+            <span class="datos num"><span>Llega en <b>${minutos(x)} min</b> · ${distancia(x)} km</span><b>${x.precio}</b></span>
           </span>
         </button>`).join('');
     }
@@ -803,23 +888,28 @@
         <div class="perfil-cabeza">
           <span class="avatar" style="background:${t.color}">${t.iniciales}</span>
           <h2>${t.nombre}</h2>
-          <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span>
+          <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span><br>${verificado}
         </div>
-        <div class="stats">
-          <div class="stat"><b>★ ${t.estrellas}</b><span>${t.resenas} reseñas</span></div>
-          <div class="stat"><b>${t.servicios}</b><span>servicios</span></div>
-          <div class="stat"><b>${t.puntualidad}</b><span>a tiempo</span></div>
+        <div class="hechos num">
+          <div class="hecho"><b>${icono('i-estrella', 'estrella on')}${t.estrellas}</b><span>${t.resenas} reseñas</span></div>
+          <div class="hecho"><b>${t.servicios}</b><span>servicios</span></div>
+          <div class="hecho"><b>${t.puntualidad}</b><span>a tiempo</span></div>
         </div>
-        <div class="caja"><strong>✓ Identidad verificada</strong>Revisamos ${t.verificacion}.</div>
-        <p class="linea"><b>Precio estimado:</b> ${t.precio}</p>
-        <p class="linea"><b>Sale desde:</b> ${t.base} · llega a ${estado.barrio} en ${minutos(t)} min</p>
-        <p class="linea"><b>Zona:</b> ${t.zona}</p>
-        <p class="linea"><b>Experiencia:</b> ${t.anios} años · <b>Marcas:</b> ${t.marcas}</p>
-        <p class="linea" style="margin-bottom:16px"><b>Horario:</b> ${t.horario}</p>
+        <div class="caja">${icono('i-escudo')}<div><strong>Identidad verificada</strong>Revisamos ${t.verificacion}.</div></div>
+        <dl class="detalles num">
+          <dt>Precio estimado</dt><dd><b>${t.precio}</b></dd>
+          <dt>Sale desde</dt><dd>${t.base} · llega en ${minutos(t)} min</dd>
+          <dt>Zona</dt><dd>${t.zona}</dd>
+          <dt>Experiencia</dt><dd>${t.anios} años</dd>
+          <dt>Marcas</dt><dd>${t.marcas}</dd>
+          <dt>Horario</dt><dd>${t.horario}</dd>
+        </dl>
         <p class="seccion">Reseñas</p>
-        ${t.opiniones.map(([e, c, q]) => `
-          <div class="resena"><span class="estrellas">${e}</span> <span class="completado">✓ Servicio completado en la app</span>
-          <p>“${c}”</p><span class="quien">${q}</span></div>`).join('')}`;
+        ${t.opiniones.map(([n, c, q]) => `
+          <div class="resena">
+            <div class="cabeza"><span class="estrellas" aria-label="${n} de 5 estrellas">${estrellas(n)}</span><span class="completado">${icono('i-check')}Servicio hecho en la app</span></div>
+            <p>“${c}”</p><span class="quien">${q}</span>
+          </div>`).join('')}`;
       texto('elegir', `Elegir a ${nombreCorto(t)}`);
     }
     if (id === 's-confirmacion') {
@@ -828,8 +918,8 @@
         <div class="fila"><span>Servicio</span><b>${estado.tipo} de ${estado.aparato.toLowerCase()} – ${estado.marca}</b></div>
         <div class="fila"><span>Dirección</span><b>${estado.barrio}, Ciudad de Panamá</b></div>
         <div class="fila"><span>Técnico</span><b>${t.nombre}</b></div>
-        <div class="fila"><span>Precio estimado</span><b>${t.precio}<br><small style="font-weight:400">sin repuestos</small></b></div>
-        <div class="fila"><span>Llega aprox.</span><b>${llegada}</b></div>`;
+        <div class="fila num"><span>Precio estimado</span><b>${t.precio}<small>sin repuestos</small></b></div>
+        <div class="fila num"><span>Llega aprox.</span><b>${llegada}</b></div>`;
     }
     if (id === 's-seguimiento') {
       texto('camino', `${nombreCorto(t)} va en camino`);
@@ -871,7 +961,7 @@
     }
     if (id === 's-llamada') {
       const av = $('#llamada-avatar');
-      av.textContent = t.iniciales; av.style.background = t.color; av.classList.add('latido');
+      av.textContent = t.iniciales; av.style.background = t.color; av.classList.add('timbrando');
       texto('llamada-nombre', t.nombre);
       document.querySelectorAll('[data-control]').forEach(c => c.classList.remove('on'));
       const estadoLlamada = $('#estado-llamada');
@@ -881,7 +971,7 @@
       reloj = setInterval(() => {
         segundos++;
         if (segundos < 0) return;
-        av.classList.remove('latido');
+        av.classList.remove('timbrando');
         estadoLlamada.textContent = `En llamada · ${String(Math.floor(segundos / 60)).padStart(2, '0')}:${String(segundos % 60).padStart(2, '0')}`;
       }, 1000);
     }
@@ -906,42 +996,64 @@
 
   function entrar() {
     estado.inicio = Date.now(); // el reto de los 60 segundos empieza al entrar
-    texto('saludo', estado.nombre ? `Hola, ${estado.nombre} 👋` : 'Hola, ¿en qué te ayudamos?');
+    texto('saludo', estado.nombre ? `Hola, ${estado.nombre}` : 'Hola, ¿en qué te ayudamos?');
     $('#barrio').value = estado.barrio;
     document.querySelectorAll('#login-clave, #reg-clave').forEach(i => { i.value = ''; i.type = 'password'; });
     ir('s-inicio');
   }
 
+  // Marca el campo con error y lo limpia en cuanto la persona vuelve a escribir
+  function marcarError(parrafo, campo, mensaje) {
+    parrafo.textContent = mensaje;
+    document.querySelectorAll('[aria-invalid]').forEach(c => c.removeAttribute('aria-invalid'));
+    if (campo) { campo.setAttribute('aria-invalid', 'true'); campo.focus(); }
+  }
+  document.addEventListener('input', e => {
+    if (e.target.hasAttribute('aria-invalid')) {
+      e.target.removeAttribute('aria-invalid');
+      e.target.closest('form').querySelector('.error').textContent = '';
+    }
+  });
+
+  // Estado de carga breve para que el botón responda antes de cambiar de pantalla
+  function cargando(boton, etiqueta, listo) {
+    const original = boton.textContent;
+    boton.disabled = true; boton.textContent = etiqueta;
+    setTimeout(() => { boton.disabled = false; boton.textContent = original; listo(); }, 450);
+  }
+
   $('#form-login').addEventListener('submit', e => {
     e.preventDefault();
     const usuario = limpio($('#login-usuario').value), clave = $('#login-clave').value;
-    const error = !usuario ? 'Escribe tu correo o teléfono.' : !clave ? 'Escribe tu contraseña.' : '';
-    $('#login-error').textContent = error;
-    if (error) return;
+    if (!usuario) return marcarError($('#login-error'), $('#login-usuario'), 'Escribe tu correo o teléfono.');
+    if (!clave) return marcarError($('#login-error'), $('#login-clave'), 'Escribe tu contraseña.');
+    marcarError($('#login-error'), null, '');
     try {
       if ($('#recordar').checked) localStorage.setItem(RECORDAR, usuario);
       else localStorage.removeItem(RECORDAR);
     } catch (e) { /* sin almacenamiento */ }
     const base = usuario.includes('@') ? usuario.split('@')[0].split(/[._-]/)[0] : '';
     estado.nombre = /^\d*$/.test(base) ? '' : base.charAt(0).toUpperCase() + base.slice(1).toLowerCase();
-    entrar();
+    cargando($('#boton-login'), 'Entrando…', entrar);
   });
 
   $('#form-registro').addEventListener('submit', e => {
     e.preventDefault();
     const nombre = limpio($('#reg-nombre').value), telefono = limpio($('#reg-telefono').value);
     const correo = limpio($('#reg-correo').value), clave = $('#reg-clave').value;
-    const error = !nombre ? 'Escribe tu nombre.'
-      : !telefono && !correo ? 'Escribe tu teléfono o tu correo.'
-      : correo && !/^\S+@\S+\.\S+$/.test(correo) ? 'Revisa el correo: falta algo.'
-      : clave.length < 6 ? 'La contraseña debe tener al menos 6 caracteres.' : '';
-    $('#registro-error').textContent = error;
-    if (error) return;
+    const error = $('#registro-error');
+    if (!nombre) return marcarError(error, $('#reg-nombre'), 'Escribe tu nombre.');
+    if (!telefono && !correo) return marcarError(error, $('#reg-telefono'), 'Escribe tu teléfono o tu correo.');
+    if (correo && !/^\S+@\S+\.\S+$/.test(correo)) return marcarError(error, $('#reg-correo'), 'Revisa el correo: falta algo.');
+    if (clave.length < 6) return marcarError(error, $('#reg-clave'), 'La contraseña debe tener al menos 6 caracteres.');
+    marcarError(error, null, '');
     estado.nombre = nombre.split(/\s+/)[0];
     estado.barrio = $('#reg-barrio').value;
-    entrar();
-    historial.splice(0, historial.length, 's-bienvenida'); // volver desde Inicio lleva al inicio de sesión, no al registro
-    avisar(`¡Hola, ${estado.nombre}! Tu cuenta quedó creada`, 'Prototipo: los datos no se guardan.');
+    cargando($('#boton-registro'), 'Creando cuenta…', () => {
+      entrar();
+      historial.splice(0, historial.length, 's-bienvenida'); // volver desde Inicio lleva al inicio de sesión, no al registro
+      avisar(`¡Hola, ${estado.nombre}! Tu cuenta quedó creada`, 'Prototipo: los datos no se guardan.');
+    });
   });
 
   $('#form-chat').addEventListener('submit', e => {
@@ -977,7 +1089,7 @@
     switch (el.dataset.accion) {
       case 'invitado':
         estado.nombre = '';
-        $('#login-error').textContent = '';
+        marcarError($('#login-error'), null, '');
         return entrar();
       case 'olvide':
         return avisar('Te enviamos un enlace para cambiar tu contraseña', 'Simulado: en la app real llegaría por correo o SMS.');

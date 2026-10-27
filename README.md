@@ -4,6 +4,8 @@ Prototipo navegable de la app **InstaFix** ("Llega, cobra lo justo, responde."),
 
 **Ver la app:** https://hamp1303-blip.github.io/InstaFix/
 
+Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [DESIGN.md](DESIGN.md).
+
 ## Cómo abrirlo
 
 - **En la computadora**: doble clic en `index.html`. Se abre en el navegador dentro de un marco de celular.
