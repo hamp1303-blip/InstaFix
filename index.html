@@ -205,6 +205,9 @@
   .chip:hover { border-color: var(--tinta); }
   .chip.sel { border-color: var(--naranja); background: var(--naranja-suave); }
 
+  .categoria { font-size: 14px; font-weight: 600; color: var(--gris); margin: 22px 0 10px; }
+  #opciones-aparato > .categoria:first-child { margin-top: 4px; }
+
   /* Lista de técnicos */
   .resumen { display: inline-block; align-self: flex-start; font-size: 14px; font-weight: 500; padding: 6px 12px; border-radius: 999px; background: var(--neutro); margin-bottom: 8px; }
   .orden { font-size: 14px; color: var(--gris); margin-bottom: 14px; }
@@ -586,7 +589,7 @@
     </div>
     <h2 data-texto="aparato-titulo">¿Qué aparato es?</h2>
     <p class="sub" data-texto="aparato-sub">Así te mostramos técnicos que ya lo conocen.</p>
-    <div class="chips" id="opciones-aparato" data-campo="aparato"></div>
+    <div id="opciones-aparato"></div>
   </section>
 
   <!-- 5. Marca -->
@@ -909,12 +912,24 @@
 
   // Lo que se puede pedir en cada oficio; el tipo (reparación, instalación o mantenimiento) se elige en Inicio.
   // Solo el aire acondicionado pregunta la marca.
+  // Cada área se divide en categorías para encontrar rápido lo que se busca.
   const APARATOS = {
-    'Aire acondicionado': ['Aire split', 'Aire de ventana', 'Refrigeradora'],
-    'Electricidad': ['Luces', 'Líneas de corriente', 'Corriente eléctrica', 'Tablero eléctrico', 'Tomacorrientes e interruptores', 'Cableado', 'Breakers y protecciones'],
-    'Plomería': ['Tubería', 'Inodoro', 'Lavamanos y llaves', 'Bomba de agua', 'Calentador de agua', 'Drenajes']
+    'Aire acondicionado': {
+      'Aires acondicionados': ['Aire split', 'Aire de ventana'],
+      'Refrigeración': ['Refrigeradora']
+    },
+    'Electricidad': {
+      'Iluminación': ['Luces', 'Lámparas y ventiladores de techo'],
+      'Instalaciones': ['Líneas de corriente', 'Cableado', 'Tomacorrientes e interruptores'],
+      'Revisión y protección': ['Corriente eléctrica', 'Tablero eléctrico', 'Breakers y protecciones']
+    },
+    'Plomería': {
+      'Tuberías y fugas': ['Tubería', 'Fuga de agua', 'Drenajes y destapes'],
+      'Baño y cocina': ['Inodoro', 'Lavamanos y llaves', 'Ducha', 'Fregadero'],
+      'Agua caliente y presión': ['Calentador de agua', 'Bomba de agua', 'Tanque de agua']
+    }
   };
-  const esAire = a => APARATOS['Aire acondicionado'].includes(a);
+  const esAire = a => Object.values(APARATOS['Aire acondicionado']).flat().includes(a);
 
   const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', urgente: false, modo: 'ahora', fecha: null, hora: null };
   const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
@@ -1068,8 +1083,13 @@
     if (id === 's-inicio') pintarTipos();
     if (id === 's-aparato') {
       const aire = estado.oficio === 'Aire acondicionado';
-      const opciones = estado.oficio === 'Emergencia' ? [...new Set(Object.values(APARATOS).flat())] : APARATOS[estado.oficio];
-      $('#opciones-aparato').innerHTML = opciones.map(o => `<button class="chip${o === estado.aparato ? ' sel' : ''}">${o}</button>`).join('');
+      // En una emergencia se muestran las tres áreas, cada una con todos sus trabajos
+      const grupos = estado.oficio === 'Emergencia'
+        ? Object.entries(APARATOS).map(([area, cats]) => [area, Object.values(cats).flat()])
+        : Object.entries(APARATOS[estado.oficio]);
+      $('#opciones-aparato').innerHTML = grupos.map(([titulo, items]) => `
+        <p class="categoria">${titulo}</p>
+        <div class="chips" data-campo="aparato">${items.map(o => `<button class="chip${o === estado.aparato ? ' sel' : ''}">${o}</button>`).join('')}</div>`).join('');
       texto('aparato-titulo', aire ? '¿Qué aparato es?' : '¿Qué trabajo necesitas?');
       texto('aparato-sub', aire ? 'Así te mostramos técnicos que ya lo conocen.' : 'Así te mostramos técnicos que ya lo hacen.');
       const pasos = estado.urgente ? ['Último paso', '100%'] : aire ? ['Paso 1 de 3', '33%'] : ['Paso 1 de 2', '50%'];

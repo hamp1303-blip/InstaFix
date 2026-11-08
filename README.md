@@ -26,7 +26,7 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 9. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
 10. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
 
-Solo **Aire acondicionado** pregunta la marca. **Electricidad** (luces, líneas de corriente, corriente eléctrica, tablero, tomacorrientes, cableado, breakers) y **Plomería** pasan del trabajo a la fecha. El servicio se arma con el tipo y el trabajo: «Instalación de luces», «Mantenimiento de aire split». Las opciones de cada área están en `APARATOS`, dentro del `<script>` de `index.html`.
+Solo **Aire acondicionado** pregunta la marca. **Electricidad** y **Plomería** pasan del trabajo a la fecha. Los trabajos de cada área están agrupados por categoría (por ejemplo, en plomería: «Tuberías y fugas», «Baño y cocina» y «Agua caliente y presión»). El servicio se arma con el tipo y el trabajo: «Instalación de luces», «Mantenimiento de aire split». Las opciones de cada área están en `APARATOS`, dentro del `<script>` de `index.html`.
 
 Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Volver al inicio** y **Cerrar sesión** reinician la demo.
 
