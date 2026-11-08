@@ -1,6 +1,6 @@
 # InstaFix — Prototipo de la app
 
-Prototipo navegable de la app **InstaFix** ("Llega, cobra lo justo, responde."), hecho para la feria de la universidad. Es un solo archivo, `index.html`. No hay que instalar nada para usarlo.
+Prototipo navegable de la app **InstaFix** ("Mantenimiento sin espera."), hecho para la feria de la universidad. Es un solo archivo, `index.html`. No hay que instalar nada para usarlo.
 
 **Ver la app:** https://hamp1303-blip.github.io/InstaFix/
 

@@ -8,7 +8,7 @@ Reglas visuales de la app. Si cambian algo en `index.html`, sigan esto para que 
   - Ícono de app: cuadro naranja `#F28C28` con la llave en azul marino.
   - Versión oscura: fondo azul marino, cabeza blanca, rayo naranja (variable `--rayo`).
 - **Nombre**: «Insta» en el color del texto + «Fix» en naranja, Rubik 600, letra un poco apretada (−0,03 em).
-- **Eslogan**: «Llega, cobra lo justo, responde.»
+- **Eslogan**: «Mantenimiento sin espera.»
 
 ## Color
 
