@@ -86,7 +86,7 @@ Si prefieren no usar el navegador, [GitHub Desktop](https://desktop.github.com) 
 
 ## QR para el stand
 
-Con el enlace de GitHub Pages, genera un QR **estático** en [QR Code Monkey](https://www.qrcode-monkey.com), que no caduca. Ponle el logo en el centro y los colores azul `#0B2545` y naranja `#FF6B00`.
+El QR ya está hecho: abre **https://instafix-two.vercel.app/qr.html** (o `qr.html` en esta carpeta), toca **Descargar PNG** (1200 × 1200 px) o imprime la página. Apunta a **https://instafix-two.vercel.app/**, es estático y no caduca. Si cambia la dirección de la app, se edita `DIRECCION` dentro de `qr.html`.
 
 ## Plan del proyecto
 

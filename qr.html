@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InstaFix — Código QR</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23F28C28'/%3E%3C/svg%3E">
+<style>
+  :root { --fondo:#FDF6EE; --tinta:#13213C; --naranja:#F28C28; --gris:#565F73; --borde:#F6D7BB; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:var(--fondo); color:var(--tinta); font-family:Rubik, system-ui, sans-serif; padding:24px 16px; }
+  main { width:100%; max-width:420px; text-align:center; }
+  .marca { font-size:34px; font-weight:700; letter-spacing:-.03em; }
+  .marca span { color:var(--naranja); }
+  .lema { margin:4px 0 20px; color:var(--gris); font-size:16px; }
+  .qr { background:#fff; border:2px solid var(--borde); border-radius:20px; padding:20px; }
+  .qr svg { display:block; width:100%; height:auto; }
+  h1 { font-size:22px; margin:20px 0 4px; }
+  .url { font-size:15px; color:var(--gris); word-break:break-all; }
+  button { margin-top:20px; height:56px; padding:0 24px; border:0; border-radius:14px; background:var(--naranja); color:var(--tinta); font:inherit; font-weight:600; font-size:16px; cursor:pointer; }
+  @media print { button { display:none; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="marca">Insta<span>Fix</span></div>
+  <p class="lema">Mantenimiento sin espera.</p>
+  <div class="qr" id="qr" aria-label="Código QR que abre la app InstaFix"></div>
+  <h1>Escanea con la cámara del celular</h1>
+  <p class="url" id="url"></p>
+  <button id="descargar" type="button">Descargar PNG</button>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+  // El QR apunta siempre a la dirección pública de la app.
+  var DIRECCION = 'https://instafix-two.vercel.app/';
+  var q = qrcode(0, 'Q');           // nivel Q: aguanta ~25 % de daño (impreso, arrugado)
+  q.addData(DIRECCION);
+  q.make();
+  var n = q.getModuleCount(), borde = 4, tam = n + borde * 2, d = '';
+  for (var f = 0; f < n; f++) for (var c = 0; c < n; c++)
+    if (q.isDark(f, c)) d += 'M' + (c + borde) + ' ' + (f + borde) + 'h1v1h-1z';
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + tam + ' ' + tam + '" shape-rendering="crispEdges">' +
+    '<rect width="' + tam + '" height="' + tam + '" fill="#fff"/><path d="' + d + '" fill="#13213C"/></svg>';
+  document.getElementById('qr').innerHTML = svg;
+  document.getElementById('url').textContent = DIRECCION.replace('https://', '');
+  window.QR_SVG = svg;
+
+  document.getElementById('descargar').addEventListener('click', function () {
+    var img = new Image();
+    img.onload = function () {
+      var lienzo = document.createElement('canvas');
+      lienzo.width = lienzo.height = 1200;
+      var cx = lienzo.getContext('2d');
+      cx.imageSmoothingEnabled = false;
+      cx.drawImage(img, 0, 0, 1200, 1200);
+      var a = document.createElement('a');
+      a.download = 'qr-instafix.png';
+      a.href = lienzo.toDataURL('image/png');
+      a.click();
+    };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+</script>
+</body>
+</html>
