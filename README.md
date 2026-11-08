@@ -16,29 +16,30 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 
 0. Primera pantalla → **Necesito un técnico** (cliente) o **Soy técnico** (ver más abajo)
 1. Inicio de sesión → escribir cualquier correo y contraseña y tocar **Iniciar sesión**, o tocar **Entrar como invitado** (aquí arranca el cronómetro). También están **Crear cuenta**, **Recordarme** y **¿Olvidaste tu contraseña?**; todo es simulado y la contraseña nunca se guarda
-2. Inicio → elegir el barrio en **Tu ubicación** (Bella Vista por defecto) → **Aire acondicionado**
-3. Tipo de servicio → **Reparación**
-4. Aparato → **Aire split**
-5. Marca → **Marca X** (LG, Samsung, Nisato, Sankey, Samurai, Marca X o «No sé / otra»)
+2. Inicio → en **¿Qué necesita?** elegir el barrio en **Tu ubicación** (Bella Vista por defecto), el tipo de servicio (**Reparación**, **Instalación** o **Mantenimiento**) y el área: **Aire acondicionado**
+3. Aparato → **Aire split**
+4. Marca → **Marca X** (LG, Samsung, Nisato, Sankey, Samurai, Marca X o «No sé / otra»)
+5. ¿Cuándo lo necesitas? → **Lo antes posible** (el camino rápido de la demo) o **Agendar una cita** (ver más abajo) → **Ver técnicos disponibles**
 6. Lista de técnicos → tocar la tarjeta de **Carlos Méndez**
 7. Perfil → **Elegir a Carlos**
-8. ¿Cuándo lo necesitas? → **Lo antes posible** (el camino rápido de la demo) o **Agendar una cita** (ver más abajo) → **Continuar**
-9. Confirmación → **Confirmar**: aparece el tiempo que tomó el pedido y si se superó el reto
-10. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
-11. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
+8. Confirmación → **Confirmar**: aparece el tiempo que tomó el pedido y si se superó el reto
+9. Seguimiento: mapa de la Ciudad de Panamá con la ruta del técnico; avanza solo después de 6 segundos. Desde aquí se puede **Llamar** o mandar **Mensaje**
+10. Pago y calificación → **Pagar y calificar** → Garantía activa de 15 días → **Reportar problema** (extra)
 
-Solo **Aire acondicionado** pasa por tipo de servicio, aparato y marca. **Electricidad** (instalación de luces, líneas de corriente, revisión de corriente eléctrica, tablero, tomacorrientes, cableado, cortocircuito) y **Plomería** piden directamente el trabajo. Las opciones de cada oficio están en `APARATOS`, dentro del `<script>` de `index.html`.
+Solo **Aire acondicionado** pregunta la marca. **Electricidad** (luces, líneas de corriente, corriente eléctrica, tablero, tomacorrientes, cableado, breakers) y **Plomería** pasan del trabajo a la fecha. El servicio se arma con el tipo y el trabajo: «Instalación de luces», «Mantenimiento de aire split». Las opciones de cada área están en `APARATOS`, dentro del `<script>` de `index.html`.
 
 Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Volver al inicio** y **Cerrar sesión** reinician la demo.
 
 ## Cita agendada
 
-En **¿Cuándo lo necesitas?**, el cliente elige entre dos opciones:
+La fecha se elige **antes** de escoger al técnico, para saber quién está libre. En **¿Cuándo lo necesitas?**, el cliente elige entre dos opciones:
 
-- **Lo antes posible**: el técnico sale ya y llega en el tiempo estimado.
-- **Agendar una cita**: se elige el día (los próximos 7 días) y la hora. Solo se pueden elegir los días en que ese técnico trabaja (Ana no atiende fines de semana) y las horas libres: las ocupadas aparecen tachadas y las que ya pasaron hoy no se pueden elegir. Cada técnico tiene su propia agenda.
+- **Lo antes posible**: se muestran los técnicos con el tiempo de llegada estimado.
+- **Agendar una cita**: se elige el día (los próximos 7 días) y la hora. Un día o una hora solo se pueden elegir si al menos un técnico está libre (las horas sin técnicos aparecen tachadas, y las que ya pasaron hoy no se pueden elegir). La pantalla dice cuántos técnicos hay libres a esa hora.
 
-Después de **Confirmar cita** aparece la pantalla **Cita agendada** con el resumen, **Llamar** y **Mensaje**, y tres botones: **Simular el día de la cita** (sigue con el seguimiento, el pago y la garantía), **Reprogramar** y **Cancelar cita** (gratis hasta 2 horas antes). Una **Emergencia** no se agenda: va directo a confirmar.
+En la lista, los técnicos libres a la hora elegida se pueden tocar, y los demás aparecen apagados bajo «No disponibles a esa hora» (Ana, por ejemplo, no atiende fines de semana). Cada técnico tiene su propia agenda.
+
+Después de **Confirmar cita** aparece la pantalla **Cita agendada** con el resumen, **Llamar** y **Mensaje**, y tres botones: **Simular el día de la cita** (sigue con el seguimiento, el pago y la garantía), **Reprogramar** y **Cancelar cita** (gratis hasta 2 horas antes). **Reprogramar** vuelve a elegir fecha y técnico. Una **Emergencia** no se agenda: salta la fecha y va directo a la lista de técnicos.
 
 Las horas ocupadas son de ejemplo. Los días y horarios de cada técnico están en `TECNICOS` (`dias`, `desde`, `hasta`).
 

@@ -335,7 +335,14 @@
   .nota-horas { font-size: 13px; margin-top: 10px; }
   .linea:empty, .resumen-cita:empty { display: none; }
   .garantia-chip + .linea { margin-top: 12px; }
-  .resumen-cita { text-align: center; font-weight: 600; margin-bottom: 10px; }
+  .resumen-cita { text-align: center; font-weight: 600; margin-bottom: 2px; }
+  .disp-cita { margin-bottom: 10px; font-size: 14px; }
+  .segmentos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; margin-bottom: 4px; background: var(--neutro); border-radius: var(--radio); }
+  .segmento { min-height: 44px; padding: 0 2px; border-radius: 10px; font-size: 13px; font-weight: 500; transition: background .15s, box-shadow .15s; }
+  .segmento:hover { background: #E5E1D8; }
+  .segmento.sel { background: var(--naranja-suave); box-shadow: inset 0 0 0 1.5px var(--naranja); font-weight: 600; }
+  .tarjeta:disabled { opacity: .55; cursor: not-allowed; }
+  .tarjeta:disabled:hover { border-color: var(--borde); }
   .peligro { color: var(--rojo); }
   .nowrap { white-space: nowrap; }
 
@@ -542,6 +549,13 @@
     </label>
     <h1>¿Qué necesita?</h1>
     <p class="sub">Técnicos verificados, con precio antes de confirmar.</p>
+    <p class="seccion" style="margin-top:0">¿Qué tipo de servicio?</p>
+    <div class="segmentos" role="radiogroup" aria-label="Tipo de servicio">
+      <button class="segmento sel" role="radio" aria-checked="true" data-tipo="Reparación">Reparación</button>
+      <button class="segmento" role="radio" aria-checked="false" data-tipo="Instalación">Instalación</button>
+      <button class="segmento" role="radio" aria-checked="false" data-tipo="Mantenimiento">Mantenimiento</button>
+    </div>
+    <p class="seccion">¿En qué área?</p>
     <div class="oficios">
       <button class="oficio" data-oficio="Plomería">
         <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
@@ -564,28 +578,11 @@
     </div>
   </section>
 
-  <!-- 3. Tipo de servicio -->
-  <section class="screen" id="s-tipo">
-    <div class="barra">
-      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <div class="progreso"><span style="width:33%"></span></div><span class="paso">Paso 1 de 3</span>
-    </div>
-    <h2>¿Qué necesitas?</h2>
-    <p class="sub" data-texto="oficio"></p>
-    <div class="chips" data-campo="tipo">
-      <button class="chip">Instalación</button>
-      <button class="chip">Reparación</button>
-      <button class="chip">Mantenimiento</button>
-      <button class="chip">Emergencia</button>
-      <button class="chip">Diagnóstico</button>
-    </div>
-  </section>
-
-  <!-- 4. Aparato -->
+  <!-- 3. Aparato o trabajo (el tipo de servicio ya se eligió en Inicio) -->
   <section class="screen" id="s-aparato">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <div class="progreso"><span id="progreso-aparato" style="width:66%"></span></div><span class="paso" data-texto="paso-aparato">Paso 2 de 3</span>
+      <div class="progreso"><span id="progreso-aparato" style="width:33%"></span></div><span class="paso" data-texto="paso-aparato">Paso 1 de 3</span>
     </div>
     <h2 data-texto="aparato-titulo">¿Qué aparato es?</h2>
     <p class="sub" data-texto="aparato-sub">Así te mostramos técnicos que ya lo conocen.</p>
@@ -596,7 +593,7 @@
   <section class="screen" id="s-marca">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <div class="progreso"><span style="width:100%"></span></div><span class="paso">Paso 3 de 3</span>
+      <div class="progreso"><span style="width:66%"></span></div><span class="paso">Paso 2 de 3</span>
     </div>
     <h2>¿De qué marca?</h2>
     <p class="sub">Un técnico que conoce tu marca resuelve más rápido.</p>
@@ -616,7 +613,7 @@
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
     </div>
-    <h2>3 técnicos disponibles</h2>
+    <h2 data-texto="lista-titulo">3 técnicos disponibles</h2>
     <span class="resumen" data-texto="resumen"></span>
     <p class="orden" data-texto="orden"></p>
     <div id="lista-tecnicos"></div>
@@ -631,14 +628,14 @@
     <div class="abajo"><button class="boton" data-accion="elegir" data-texto="elegir"></button></div>
   </section>
 
-  <!-- 7b. Cuándo: ahora o cita agendada -->
+  <!-- 3b. Cuándo: ahora o cita agendada (antes de elegir técnico, para ver quién está libre) -->
   <section class="screen" id="s-cuando">
     <div class="barra">
       <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
-      <span class="paso">Fecha y hora</span>
+      <div class="progreso"><span style="width:100%"></span></div><span class="paso" data-texto="paso-cuando">Paso 3 de 3</span>
     </div>
     <h2>¿Cuándo lo necesitas?</h2>
-    <p class="sub" data-texto="cuando-sub"></p>
+    <p class="sub">Así te mostramos solo los técnicos que están libres.</p>
     <div class="modos" role="radiogroup" aria-label="Cuándo">
       <button class="modo sel" role="radio" aria-checked="true" data-modo="ahora">
         <span class="icono"><svg><use href="#i-rayo"/></svg></span>
@@ -654,11 +651,12 @@
       <div class="dias" id="dias"></div>
       <p class="seccion">Hora</p>
       <div class="horas num" id="horas"></div>
-      <p class="linea nota-horas">Las horas tachadas ya están ocupadas. Puedes reprogramar o cancelar gratis hasta 2 horas antes.</p>
+      <p class="linea nota-horas">Las horas tachadas no tienen ningún técnico libre. Puedes reprogramar o cancelar gratis hasta 2 horas antes.</p>
     </div>
     <div class="abajo">
       <p class="resumen-cita" data-texto="cita-resumen"></p>
-      <button class="boton" id="boton-cuando" data-accion="continuar-cuando">Continuar</button>
+      <p class="linea centro disp-cita" data-texto="cita-disp"></p>
+      <button class="boton" id="boton-cuando" data-accion="continuar-cuando">Ver técnicos disponibles</button>
     </div>
   </section>
 
@@ -909,15 +907,16 @@
     'Aire acondicionado': { solicitud: 'Reparación de aire split', citas: [[9, 'Mantenimiento de aire de ventana', 'Obarrio'], [14, 'Instalación de aire split', 'El Cangrejo']] }
   };
 
-  // Lo que se puede pedir en cada oficio. Solo el aire acondicionado pregunta tipo de servicio y marca.
+  // Lo que se puede pedir en cada oficio; el tipo (reparación, instalación o mantenimiento) se elige en Inicio.
+  // Solo el aire acondicionado pregunta la marca.
   const APARATOS = {
     'Aire acondicionado': ['Aire split', 'Aire de ventana', 'Refrigeradora'],
-    'Electricidad': ['Instalación de luces', 'Instalación de líneas de corriente', 'Revisión de corriente eléctrica', 'Tablero eléctrico', 'Tomacorrientes e interruptores', 'Cableado', 'Cortocircuito o apagón'],
-    'Plomería': ['Tubería', 'Fuga de agua', 'Inodoro', 'Lavamanos y llaves', 'Bomba de agua', 'Calentador de agua']
+    'Electricidad': ['Luces', 'Líneas de corriente', 'Corriente eléctrica', 'Tablero eléctrico', 'Tomacorrientes e interruptores', 'Cableado', 'Breakers y protecciones'],
+    'Plomería': ['Tubería', 'Inodoro', 'Lavamanos y llaves', 'Bomba de agua', 'Calentador de agua', 'Drenajes']
   };
   const esAire = a => APARATOS['Aire acondicionado'].includes(a);
 
-  const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', modo: 'ahora', fecha: null, hora: null };
+  const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', urgente: false, modo: 'ahora', fecha: null, hora: null };
   const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
   const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() };
   const historial = [];
@@ -948,23 +947,22 @@
   const mayus = s => s.charAt(0).toUpperCase() + s.slice(1);
   const fechaLarga = d => mayus(d.toLocaleDateString('es-PA', { weekday: 'long', day: 'numeric', month: 'long' }));
   const hora12 = h => h === 12 ? '12:00 p. m.' : h > 12 ? `${h - 12}:00 p. m.` : `${h}:00 a. m.`;
-  // Nombre del servicio pedido, según el oficio: el aire lleva tipo y marca; lo demás es el trabajo elegido
-  const servicio = () => esAire(estado.aparato) && estado.tipo ? `${estado.tipo} de ${estado.aparato.toLowerCase()}`
-    : estado.tipo === 'Emergencia' ? `Emergencia: ${estado.aparato.toLowerCase()}` : estado.aparato;
+  // Nombre del servicio pedido: tipo + aparato o trabajo ("Instalación de luces")
+  const servicio = () => estado.urgente ? `Emergencia: ${estado.aparato.toLowerCase()}` : `${estado.tipo} de ${estado.aparato.toLowerCase()}`;
   const esAgendada = () => estado.modo === 'agendada' && estado.fecha && estado.hora != null;
   const proximosDias = () => Array.from({ length: 7 }, (_, i) => {
     const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return d;
   });
   // Cada cita dura unas 2 horas; la última empieza 2 horas antes de que el técnico cierre
-  function horasDe(t, d) {
+  const HORAS = Array.from({ length: 12 }, (_, i) => 7 + i);
+  function horaLibre(t, d, h) {
     const ahora = new Date();
-    return Array.from({ length: t.hasta - 1 - t.desde }, (_, i) => t.desde + i).map(h => {
-      const pasada = d.toDateString() === ahora.toDateString() && h <= ahora.getHours() + 1;
-      const ocupada = (d.getDate() * 5 + h * 3 + t.id.length) % 4 === 0; // ocupación de ejemplo
-      return { h, libre: !pasada && !ocupada };
-    });
+    const pasada = d.toDateString() === ahora.toDateString() && h <= ahora.getHours() + 1;
+    const ocupada = (d.getDate() * 5 + h * 3 + t.id.length) % 4 === 0; // ocupación de ejemplo
+    return t.dias.includes(d.getDay()) && h >= t.desde && h <= t.hasta - 2 && !pasada && !ocupada;
   }
-  const diaLibre = (t, d) => t.dias.includes(d.getDay()) && horasDe(t, d).some(x => x.libre);
+  const disponibles = (d, h) => TECNICOS.filter(t => horaLibre(t, d, h));
+  const diaLibre = d => HORAS.some(h => disponibles(d, h).length);
 
   function ir(id, guardar = true) {
     const actual = document.querySelector('.screen.activa');
@@ -1067,30 +1065,40 @@
   // Llena cada pantalla con los datos del pedido justo antes de mostrarla
   function preparar(id) {
     const t = estado.tecnico;
-    if (id === 's-tipo') texto('oficio', estado.oficio);
+    if (id === 's-inicio') pintarTipos();
     if (id === 's-aparato') {
       const aire = estado.oficio === 'Aire acondicionado';
       const opciones = estado.oficio === 'Emergencia' ? [...new Set(Object.values(APARATOS).flat())] : APARATOS[estado.oficio];
       $('#opciones-aparato').innerHTML = opciones.map(o => `<button class="chip${o === estado.aparato ? ' sel' : ''}">${o}</button>`).join('');
       texto('aparato-titulo', aire ? '¿Qué aparato es?' : '¿Qué trabajo necesitas?');
       texto('aparato-sub', aire ? 'Así te mostramos técnicos que ya lo conocen.' : 'Así te mostramos técnicos que ya lo hacen.');
-      texto('paso-aparato', aire ? 'Paso 2 de 3' : 'Último paso');
-      $('#progreso-aparato').style.width = aire ? '66%' : '100%';
+      const pasos = estado.urgente ? ['Último paso', '100%'] : aire ? ['Paso 1 de 3', '33%'] : ['Paso 1 de 2', '50%'];
+      texto('paso-aparato', pasos[0]);
+      $('#progreso-aparato').style.width = pasos[1];
     }
     if (id === 's-lista') {
-      const lista = ordenados();
-      texto('resumen', esAire(estado.aparato) ? `${estado.tipo} · ${estado.aparato} · ${estado.marca}` : servicio());
-      texto('orden', `Cerca de ${estado.barrio}, ordenados por el que llega primero`);
-      $('#lista-tecnicos').innerHTML = lista.map((x, i) => `
-        <button class="tarjeta" data-tecnico="${x.id}">
+      // Con cita agendada, solo se pueden elegir los técnicos libres a esa hora; los demás salen apagados
+      const agendada = esAgendada();
+      const todos = ordenados();
+      const libres = agendada ? todos.filter(x => horaLibre(x, estado.fecha, estado.hora)) : todos;
+      const ocupados = todos.filter(x => !libres.includes(x));
+      texto('lista-titulo', `${libres.length} técnico${libres.length === 1 ? '' : 's'} disponible${libres.length === 1 ? '' : 's'}`);
+      texto('resumen', esAire(estado.aparato) ? `${servicio()} · ${estado.marca}` : servicio());
+      texto('orden', agendada ? `${fechaLarga(estado.fecha)} · ${hora12(estado.hora)}` : `Cerca de ${estado.barrio}, ordenados por el que llega primero`);
+      const tarjeta = (x, i, libre) => `
+        <button class="tarjeta"${libre ? ` data-tecnico="${x.id}"` : ' disabled'}>
           <span class="avatar" style="background:${x.color}">${x.iniciales}</span>
           <span class="info">
             <span class="nombre">${x.nombre} ${verificado}</span>
             <span class="insignia">Especialista en ${estado.aparato.toLowerCase()}</span>
-            <span class="datos num"><span class="calif">${icono('i-estrella', 'estrella on')}<b>${x.estrellas}</b> (${x.resenas})</span><span class="destaca">${i === 0 ? 'Llega primero' : x.fuerte}</span></span>
-            <span class="datos num"><span>Llega en <b>${minutos(x)} min</b> · ${distancia(x)} km</span><b>${x.precio}</b></span>
+            <span class="datos num"><span class="calif">${icono('i-estrella', 'estrella on')}<b>${x.estrellas}</b> (${x.resenas})</span><span class="destaca">${!libre ? 'No disponible' : !agendada && i === 0 ? 'Llega primero' : x.fuerte}</span></span>
+            <span class="datos num">${agendada
+              ? `<span>${distancia(x)} km de ti</span>`
+              : `<span>Llega en <b>${minutos(x)} min</b> · ${distancia(x)} km</span>`}<b>${x.precio}</b></span>
           </span>
-        </button>`).join('');
+        </button>`;
+      $('#lista-tecnicos').innerHTML = libres.map((x, i) => tarjeta(x, i, true)).join('')
+        + (ocupados.length ? `<p class="seccion">No disponibles a esa hora</p>` + ocupados.map(x => tarjeta(x, 0, false)).join('') : '');
     }
     if (id === 's-perfil') {
       $('#perfil-contenido').innerHTML = `
@@ -1203,11 +1211,19 @@
     }
   }
 
+  // Selector de tipo de servicio en Inicio (reparación, instalación o mantenimiento)
+  function pintarTipos() {
+    document.querySelectorAll('[data-tipo]').forEach(b => {
+      const activo = b.dataset.tipo === estado.tipo;
+      b.classList.toggle('sel', activo); b.setAttribute('aria-checked', activo);
+    });
+  }
+
   // Pantalla "¿Cuándo lo necesitas?": lo antes posible o una cita con día y hora
   function pintarCuando() {
-    const t = estado.tecnico, agendar = estado.modo === 'agendada';
-    texto('cuando-sub', `${nombreCorto(t)} atiende ${t.horario}.`);
-    texto('ahora-detalle', `Llega en unos ${minutos(t)} min`);
+    const agendar = estado.modo === 'agendada';
+    texto('paso-cuando', esAire(estado.aparato) ? 'Paso 3 de 3' : 'Paso 2 de 2');
+    texto('ahora-detalle', `Llega en unos ${minutos(ordenados()[0])} min`);
     document.querySelectorAll('[data-modo]').forEach(b => {
       const activo = b.dataset.modo === estado.modo;
       b.classList.toggle('sel', activo); b.setAttribute('aria-checked', activo);
@@ -1215,16 +1231,20 @@
     $('#agenda').style.display = agendar ? '' : 'none';
     if (agendar) {
       const dias = proximosDias();
-      if (!estado.fecha || !diaLibre(t, estado.fecha)) { estado.fecha = dias.find(d => diaLibre(t, d)) || null; estado.hora = null; }
-      if (estado.fecha && estado.hora != null && !horasDe(t, estado.fecha).some(x => x.h === estado.hora && x.libre)) estado.hora = null;
+      if (!estado.fecha || !diaLibre(estado.fecha)) { estado.fecha = dias.find(diaLibre) || null; estado.hora = null; }
+      if (estado.fecha && estado.hora != null && !disponibles(estado.fecha, estado.hora).length) estado.hora = null;
       $('#dias').innerHTML = dias.map((d, i) => {
-        const libre = diaLibre(t, d), sel = estado.fecha && d.getTime() === estado.fecha.getTime();
+        const libre = diaLibre(d), sel = estado.fecha && d.getTime() === estado.fecha.getTime();
         return `<button class="dia${sel ? ' sel' : ''}" data-dia="${d.getTime()}" aria-pressed="${!!sel}" aria-label="${fechaLarga(d)}${libre ? '' : ', sin disponibilidad'}"${libre ? '' : ' disabled'}><small>${i === 0 ? 'Hoy' : DIAS_CORTOS[d.getDay()]}</small><b class="num">${d.getDate()}</b></button>`;
       }).join('');
-      $('#horas').innerHTML = estado.fecha ? horasDe(t, estado.fecha).map(x =>
-        `<button class="hora${x.h === estado.hora ? ' sel' : ''}" data-hora="${x.h}" aria-pressed="${x.h === estado.hora}"${x.libre ? '' : ' disabled'}>${hora12(x.h)}</button>`).join('') : '';
+      $('#horas').innerHTML = estado.fecha ? HORAS.map(h => {
+        const libre = disponibles(estado.fecha, h).length > 0;
+        return `<button class="hora${h === estado.hora ? ' sel' : ''}" data-hora="${h}" aria-pressed="${h === estado.hora}"${libre ? '' : ' disabled'}>${hora12(h)}</button>`;
+      }).join('') : '';
     }
+    const n = agendar && estado.hora != null ? disponibles(estado.fecha, estado.hora).length : 0;
     texto('cita-resumen', agendar && estado.hora != null ? `${fechaLarga(estado.fecha)} · ${hora12(estado.hora)}` : '');
+    texto('cita-disp', n ? `${n} técnico${n === 1 ? '' : 's'} libre${n === 1 ? '' : 's'} a esa hora` : '');
     $('#boton-cuando').disabled = agendar && estado.hora == null;
   }
 
@@ -1375,15 +1395,13 @@
 
     if (el.dataset.ir) return ir(el.dataset.ir);
     if (el.dataset.rol) { estado.rol = el.dataset.rol; aplicarRol(); return ir('s-bienvenida'); }
+    if (el.dataset.tipo) { estado.tipo = el.dataset.tipo; return pintarTipos(); }
     if (el.dataset.oficio) {
-      estado.oficio = el.dataset.oficio;
-      if (estado.oficio === 'Aire acondicionado') return ir('s-tipo');
-      estado.tipo = ''; estado.aparato = ''; // electricidad y plomería: se elige el trabajo directamente
+      Object.assign(estado, { oficio: el.dataset.oficio, urgente: false, aparato: '', modo: 'ahora', fecha: null, hora: null });
       return ir('s-aparato');
     }
     if (el.dataset.tecnico) {
       estado.tecnico = TECNICOS.find(x => x.id === el.dataset.tecnico);
-      estado.fecha = null; estado.hora = null; // la agenda es de cada técnico
       return ir('s-perfil');
     }
     if (el.dataset.modo) { estado.modo = el.dataset.modo; return pintarCuando(); }
@@ -1397,8 +1415,10 @@
       grupo.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
       el.classList.add('sel');
       estado[grupo.dataset.campo] = el.textContent.trim();
-      const siguiente = { tipo: 's-aparato', aparato: esAire(estado.aparato) ? 's-marca' : 's-lista', marca: 's-lista' }[grupo.dataset.campo];
-      return setTimeout(() => ir(siguiente), 150);
+      // una emergencia no se agenda: salta la fecha y va directo a los técnicos
+      const alCuando = () => { if (estado.urgente) estado.modo = 'ahora'; return estado.urgente ? 's-lista' : 's-cuando'; };
+      const siguiente = () => grupo.dataset.campo === 'aparato' && esAire(estado.aparato) ? 's-marca' : alCuando();
+      return setTimeout(() => ir(siguiente()), 150);
     }
 
     if (el.parentElement && el.parentElement.id === 'calificar') {
@@ -1419,17 +1439,15 @@
         return;
       }
       case 'emergencia':
-        estado.tipo = 'Emergencia'; estado.oficio = 'Emergencia'; estado.aparato = '';
+        Object.assign(estado, { oficio: 'Emergencia', urgente: true, aparato: '', modo: 'ahora', fecha: null, hora: null });
         return ir('s-aparato');
       case 'atras':
       case 'colgar':
         return atras();
       case 'elegir':
-        // una emergencia no se agenda: va directo a confirmar
-        if (estado.tipo === 'Emergencia') { estado.modo = 'ahora'; return ir('s-confirmacion'); }
-        return ir('s-cuando');
-      case 'continuar-cuando':
         return ir('s-confirmacion');
+      case 'continuar-cuando':
+        return ir('s-lista');
       case 'reprogramar': {
         const i = historial.lastIndexOf('s-cuando');
         if (i >= 0) historial.splice(i);
