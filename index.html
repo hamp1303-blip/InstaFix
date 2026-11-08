@@ -366,6 +366,21 @@
   .peligro { color: var(--rojo); }
   .nowrap { white-space: nowrap; }
 
+  /* Inicio: áreas como tarjetas con dibujo */
+  #s-inicio { background: #FDF6EE; }
+  #s-inicio h1 { font-size: 30px; font-weight: 700; letter-spacing: -.025em; }
+  .areas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .area {
+    display: grid; grid-template-rows: 64px auto; justify-items: center; align-content: center; gap: 10px;
+    min-height: 140px; padding: 14px 6px 12px; border-radius: 16px;
+    background: #FEF1E4; border: 1.5px solid #F6D7BB; color: var(--tinta);
+    font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center; text-wrap: balance;
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .area:hover { border-color: var(--naranja); background: #FDEBD8; }
+  .area:active { transform: scale(.97); }
+  .area svg { width: 60px; height: 60px; align-self: center; }
+
   /* Barra inferior */
   .tabs {
     position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
@@ -597,21 +612,29 @@
       <button class="segmento" role="radio" aria-checked="false" data-tipo="Mantenimiento">Mantenimiento</button>
     </div>
     <p class="seccion">¿En qué área?</p>
-    <div class="oficios">
-      <button class="oficio" data-oficio="Plomería">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>
-        <span>Plomería<small>Tuberías, inodoros, bombas</small></span>
-        <svg class="chevron"><use href="#i-chevron"/></svg>
+    <div class="areas">
+      <button class="area" data-oficio="Plomería">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M26 6h14M33 6v12"/>
+          <path d="M8 18h30a10 10 0 0 1 10 10v6M8 12v12M42 34h12"/>
+          <path d="M48 42c4 5 6 8 6 11a6 6 0 0 1-12 0c0-3 2-6 6-11z" fill="var(--naranja)" stroke="var(--naranja)"/>
+        </svg>
+        <span>Plomería</span>
       </button>
-      <button class="oficio" data-oficio="Electricidad">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
-        <span>Electricidad<small>Luces, líneas de corriente, revisiones</small></span>
-        <svg class="chevron"><use href="#i-chevron"/></svg>
+      <button class="area" data-oficio="Electricidad">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M32 16a14 14 0 0 0-8 25.5V47h16v-5.5A14 14 0 0 0 32 16zM26 53h12M29 58h6M27 31l5 5 5-5"/>
+          <path d="M32 3v6M12 11l4 4M52 11l-4 4M4 28h6M54 28h6" stroke="var(--naranja)"/>
+        </svg>
+        <span>Electricidad</span>
       </button>
-      <button class="oficio" data-oficio="Aire acondicionado">
-        <span class="icono"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M4.9 6.9l14.2 10.2M19.1 6.9 4.9 17.1M9 4l3 3 3-3M9 20l3-3 3 3"/></svg></span>
-        <span>Aire acondicionado<small>Split, ventana, mantenimiento</small></span>
-        <svg class="chevron"><use href="#i-chevron"/></svg>
+      <button class="area" data-oficio="Aire acondicionado">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="5" y="12" width="54" height="20" rx="4"/>
+          <path d="M11 26h42"/>
+          <path d="M19 38c-3 3 3 6 0 9s3 6 0 9M32 38c-3 3 3 6 0 9s3 6 0 9M45 38c-3 3 3 6 0 9s3 6 0 9" stroke="var(--naranja)"/>
+        </svg>
+        <span>Aire acondicionado</span>
       </button>
     </div>
     <div class="abajo">
