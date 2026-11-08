@@ -349,6 +349,34 @@
   .peligro { color: var(--rojo); }
   .nowrap { white-space: nowrap; }
 
+  /* Barra inferior */
+  .tabs {
+    position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+    display: none; grid-template-columns: repeat(3, 1fr); align-items: end;
+    padding: 6px 12px calc(8px + env(safe-area-inset-bottom));
+    background: var(--superficie); border-top: 1px solid var(--borde);
+  }
+  .device.con-tabs .tabs { display: grid; }
+  .device.con-tabs .screen { padding-bottom: 96px; }
+  .tab { display: grid; justify-items: center; gap: 2px; padding: 6px 0 2px; min-height: 56px; font-size: 12px; font-weight: 500; color: var(--gris); border-radius: 12px; transition: color .15s; }
+  .tab svg { width: 24px; height: 24px; }
+  .tab:hover { color: var(--tinta); }
+  .tab.activa { color: var(--tinta); font-weight: 600; }
+  .tab.activa > svg { color: var(--naranja-texto); }
+  .tab .ico { width: 44px; height: 44px; border-radius: 14px; background: var(--tinta); color: var(--naranja); display: grid; place-items: center; transition: background .15s, color .15s; }
+  .tab.central { margin-top: -18px; }
+  .tab.central.activa .ico { background: var(--naranja); color: var(--tinta); }
+
+  /* Mis pedidos e historial */
+  .estado-chip { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--neutro); color: var(--gris); }
+  .estado-chip.agendada { background: var(--naranja-suave); color: var(--naranja-texto); }
+  .estado-chip.camino, .estado-chip.completado { background: var(--verde-claro); color: var(--verde); }
+  .estado-chip.cancelado { background: var(--rojo-claro); color: var(--rojo); }
+  .tarjeta.fija { cursor: default; }
+  .tarjeta.fija:hover { border-color: var(--borde); }
+  .vacio { text-align: center; padding: 32px 16px; color: var(--gris); }
+  .vacio .boton { margin-top: 16px; }
+
   /* Lado del técnico */
   .interruptor-fila { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; margin-bottom: 14px; background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); }
   .interruptor-fila b { display: block; font-size: 16px; font-weight: 600; }
@@ -447,6 +475,8 @@
     <symbol id="i-casa" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M10 20v-5.5h4V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-herramienta" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 10h17M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-pedidos" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 4V3h6v1M9 11h6M9 15.5h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-historial" viewBox="0 0 24 24"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1M3.5 4.5v4h4M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-rayo" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   </svg>
 
@@ -729,7 +759,7 @@
     </div>
     <div class="abajo">
       <button class="boton" data-ir="s-reportar">Reportar problema</button>
-      <button class="boton secundario" data-accion="reiniciar">Volver al inicio</button>
+      <button class="boton secundario" data-tab="s-inicio">Volver al inicio</button>
     </div>
   </section>
 
@@ -754,7 +784,7 @@
     </div>
     <div class="abajo">
       <button class="boton" id="enviar-reporte" data-accion="reportar">Enviar reporte</button>
-      <button class="boton secundario" data-accion="reiniciar">Volver al inicio</button>
+      <button class="boton secundario" data-tab="s-inicio">Volver al inicio</button>
     </div>
   </section>
 
@@ -806,6 +836,29 @@
     <div class="abajo"><button class="boton secundario" data-accion="reiniciar">Cerrar sesión</button></div>
   </section>
 
+  <!-- Mis pedidos: servicios en curso y citas agendadas -->
+  <section class="screen" id="s-pedidos">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Mis pedidos</span>
+    </div>
+    <h2>Mis pedidos</h2>
+    <p class="sub">Servicios en curso y citas agendadas.</p>
+    <div id="lista-pedidos"></div>
+  </section>
+
+  <!-- Historial: servicios terminados o cancelados -->
+  <section class="screen" id="s-historial">
+    <div class="barra">
+      <button class="atras" data-accion="atras" aria-label="Volver"><svg><use href="#i-atras"/></svg></button>
+      <span class="paso">Historial</span>
+    </div>
+    <h2>Historial</h2>
+    <p class="sub">Tus servicios anteriores.</p>
+    <div id="lista-historial"></div>
+    <p class="legal">Prototipo: los dos primeros servicios son ejemplos de muestra.</p>
+  </section>
+
   <!-- Chat con el técnico -->
   <section class="screen" id="s-chat">
     <div class="chat-cabeza">
@@ -842,6 +895,13 @@
     </div>
     <p class="nota-simulada">Llamada simulada · prototipo</p>
   </section>
+
+  <!-- Barra inferior: visible en todas las pantallas del cliente menos en las de entrada, el chat y la llamada -->
+  <nav class="tabs" id="tabs" aria-label="Navegación principal">
+    <button class="tab" data-tab="s-pedidos"><svg><use href="#i-pedidos"/></svg><span>Mis pedidos</span></button>
+    <button class="tab central" data-tab="s-inicio"><span class="ico"><svg><use href="#i-casa"/></svg></span><span>Inicio</span></button>
+    <button class="tab" data-tab="s-historial"><svg><use href="#i-historial"/></svg><span>Historial</span></button>
+  </nav>
 </main>
 
 <script>
@@ -933,7 +993,13 @@
 
   const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', urgente: false, modo: 'ahora', fecha: null, hora: null };
   const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
-  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() };
+  // Pedidos del cliente: los dos primeros del historial son ejemplos de muestra
+  const haceDias = n => Date.now() - n * 864e5;
+  const nuevosPedidos = () => [
+    { id: 1, servicio: 'Mantenimiento de aire split', tecnico: TECNICOS[1], barrio: 'Bella Vista', estado: 'Completado', total: '$65', calif: 5, fin: haceDias(20) },
+    { id: 2, servicio: 'Reparación de tubería', tecnico: TECNICOS[2], barrio: 'Bella Vista', estado: 'Completado', total: '$48', calif: 4, fin: haceDias(47) }
+  ];
+  const estado = { ...INICIAL, tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec(), pedidos: nuevosPedidos(), pedido: null };
   const historial = [];
   let temporizador = null;  // avance automático del seguimiento
   let reloj = null;         // cronómetro de la llamada
@@ -979,6 +1045,16 @@
   const disponibles = (d, h) => TECNICOS.filter(t => horaLibre(t, d, h));
   const diaLibre = d => HORAS.some(h => disponibles(d, h).length);
 
+  // Barra inferior: no aparece al entrar, en el chat, en la llamada ni en la vista del técnico.
+  // Cada pantalla marca como activa la pestaña de la que forma parte.
+  const SIN_TABS = ['s-rol', 's-bienvenida', 's-registro', 's-tecnico', 's-chat', 's-llamada'];
+  const TAB_DE = { 's-pedidos': 's-pedidos', 's-cita': 's-pedidos', 's-seguimiento': 's-pedidos',
+    's-historial': 's-historial', 's-pago': 's-historial', 's-garantia': 's-historial', 's-reportar': 's-historial' };
+  function pintarTabs(id) {
+    $('#app').classList.toggle('con-tabs', !SIN_TABS.includes(id));
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('activa', b.dataset.tab === (TAB_DE[id] || 's-inicio')));
+  }
+
   function ir(id, guardar = true) {
     const actual = document.querySelector('.screen.activa');
     if (actual && actual.id === id) return;
@@ -987,8 +1063,16 @@
     if (actual) actual.classList.remove('activa');
     const siguiente = document.getElementById(id);
     preparar(id);
+    pintarTabs(id);
     siguiente.classList.add('activa');
     siguiente.scrollTop = 0;
+  }
+
+  // Las pestañas son destinos de primer nivel: volver desde ellas lleva a Inicio
+  function irTab(id) {
+    historial.splice(0, historial.length, 's-rol', 's-bienvenida', ...(id === 's-inicio' ? [] : ['s-inicio']));
+    if (document.querySelector('.screen.activa').id === id) return preparar(id);
+    ir(id, false);
   }
 
   function atras() {
@@ -1081,6 +1165,16 @@
   function preparar(id) {
     const t = estado.tecnico;
     if (id === 's-inicio') pintarTipos();
+    if (id === 's-pedidos') {
+      const activos = estado.pedidos.filter(p => p.estado === 'Agendada' || p.estado === 'En camino');
+      $('#lista-pedidos').innerHTML = activos.length ? activos.map(p => tarjetaPedido(p, true)).join('')
+        : `<div class="vacio"><p>Todavía no tienes pedidos en curso.</p><button class="boton" data-tab="s-inicio">Pedir un técnico</button></div>`;
+    }
+    if (id === 's-historial') {
+      const hechos = estado.pedidos.filter(p => p.estado === 'Completado' || p.estado === 'Cancelado').sort((a, b) => (b.fin || 0) - (a.fin || 0));
+      $('#lista-historial').innerHTML = hechos.length ? hechos.map(p => tarjetaPedido(p, false)).join('')
+        : `<div class="vacio"><p>Aquí aparecerán tus servicios terminados.</p></div>`;
+    }
     if (id === 's-aparato') {
       const aire = estado.oficio === 'Aire acondicionado';
       // En una emergencia se muestran las tres áreas, cada una con todos sus trabajos
@@ -1229,6 +1323,36 @@
         estadoLlamada.textContent = `En llamada · ${String(Math.floor(segundos / 60)).padStart(2, '0')}:${String(segundos % 60).padStart(2, '0')}`;
       }, 1000);
     }
+  }
+
+  // Tarjeta de un pedido en "Mis pedidos" (se puede abrir) o en el historial (solo lectura)
+  const fechaCorta = d => new Date(d).toLocaleDateString('es-PA', { weekday: 'short', day: 'numeric', month: 'short' });
+  function tarjetaPedido(p, abrir) {
+    const t = p.tecnico;
+    const clase = { 'Agendada': 'agendada', 'En camino': 'camino', 'Completado': 'completado', 'Cancelado': 'cancelado' }[p.estado];
+    const cuando = p.estado === 'Agendada' ? `${fechaCorta(p.fecha)} · ${hora12(p.hora)}`
+      : p.estado === 'En camino' ? `Llega en ${Math.round(6 + km(t.base, p.barrio) * 2.4)} min`
+      : fechaCorta(p.fin);
+    const derecha = p.estado === 'Completado' ? `<b>${p.total}</b>` : p.estado === 'Cancelado' ? '' : `<b>${t.precio}</b>`;
+    return `
+      <${abrir ? 'button' : 'div'} class="tarjeta${abrir ? '' : ' fija'}"${abrir ? ` data-pedido="${p.id}"` : ''}>
+        <span class="avatar" style="background:${t.color}">${t.iniciales}</span>
+        <span class="info">
+          <span class="nombre">${p.servicio}</span>
+          <span class="datos"><span>${t.nombre}</span></span>
+          <span class="datos num"><span>${cuando}</span>${p.estado === 'Completado' ? `<span class="calif">${estrellas(p.calif)}</span>` : ''}</span>
+          <span class="datos num"><span class="estado-chip ${clase}">${p.estado}</span>${derecha}</span>
+        </span>
+      </${abrir ? 'button' : 'div'}>`;
+  }
+
+  // Abre un pedido de "Mis pedidos" con los datos con los que se pidió
+  function abrirPedido(id) {
+    const p = estado.pedidos.find(x => x.id === +id);
+    Object.assign(estado, { tecnico: p.tecnico, barrio: p.barrio, modo: p.modo, fecha: p.fecha, hora: p.hora, tipo: p.tipo,
+      aparato: p.aparato, marca: p.marca, urgente: p.urgente, pedido: p });
+    $('#barrio').value = estado.barrio;
+    ir(p.estado === 'Agendada' ? 's-cita' : 's-seguimiento');
   }
 
   // Selector de tipo de servicio en Inicio (reparación, instalación o mantenimiento)
@@ -1415,9 +1539,11 @@
 
     if (el.dataset.ir) return ir(el.dataset.ir);
     if (el.dataset.rol) { estado.rol = el.dataset.rol; aplicarRol(); return ir('s-bienvenida'); }
+    if (el.dataset.tab) return irTab(el.dataset.tab);
+    if (el.dataset.pedido) return abrirPedido(el.dataset.pedido);
     if (el.dataset.tipo) { estado.tipo = el.dataset.tipo; return pintarTipos(); }
     if (el.dataset.oficio) {
-      Object.assign(estado, { oficio: el.dataset.oficio, urgente: false, aparato: '', modo: 'ahora', fecha: null, hora: null });
+      Object.assign(estado, { oficio: el.dataset.oficio, urgente: false, aparato: '', modo: 'ahora', fecha: null, hora: null, pedido: null });
       return ir('s-aparato');
     }
     if (el.dataset.tecnico) {
@@ -1459,7 +1585,7 @@
         return;
       }
       case 'emergencia':
-        Object.assign(estado, { oficio: 'Emergencia', urgente: true, aparato: '', modo: 'ahora', fecha: null, hora: null });
+        Object.assign(estado, { oficio: 'Emergencia', urgente: true, aparato: '', modo: 'ahora', fecha: null, hora: null, pedido: null });
         return ir('s-aparato');
       case 'atras':
       case 'colgar':
@@ -1469,18 +1595,21 @@
       case 'continuar-cuando':
         return ir('s-lista');
       case 'reprogramar': {
+        // la cita vieja se descarta: al confirmar de nuevo se crea la nueva
+        estado.pedidos = estado.pedidos.filter(p => p !== estado.pedido); estado.pedido = null;
         const i = historial.lastIndexOf('s-cuando');
         if (i >= 0) historial.splice(i);
+        else historial.splice(0, historial.length, 's-rol', 's-bienvenida', 's-inicio'); // cita abierta desde Mis pedidos
         return ir('s-cuando', false);
       }
       case 'cancelar-cita': {
-        const i = historial.lastIndexOf('s-inicio');
-        if (i >= 0) historial.splice(i);
-        Object.assign(estado, { modo: 'ahora', fecha: null, hora: null });
-        avisar('Cita cancelada', 'Sin costo: faltaban más de 2 horas.');
-        return ir('s-inicio', false);
+        if (estado.pedido) Object.assign(estado.pedido, { estado: 'Cancelado', fin: Date.now() });
+        irTab('s-inicio');
+        Object.assign(estado, { modo: 'ahora', fecha: null, hora: null, pedido: null });
+        return avisar('Cita cancelada', 'Sin costo: faltaban más de 2 horas. La encuentras en tu historial.');
       }
       case 'ver-dia':
+        if (estado.pedido) estado.pedido.estado = 'En camino';
         return ir('s-seguimiento');
       case 'disponible':
         estado.tec.disponible = !estado.tec.disponible;
@@ -1500,9 +1629,16 @@
           avisar(`Pediste un técnico en ${s} s`, s <= 60 ? '¡Reto de los 60 segundos superado!' : 'Inténtalo otra vez en menos de 60 s');
           estado.inicio = null;
         }
+        // se guarda el pedido para verlo en "Mis pedidos"; si se confirma otra vez, reemplaza al anterior
+        estado.pedidos = estado.pedidos.filter(p => p !== estado.pedido);
+        estado.pedido = { id: Date.now(), servicio: servicio() + (esAire(estado.aparato) ? ` – ${estado.marca}` : ''), tecnico: estado.tecnico,
+          barrio: estado.barrio, modo: esAgendada() ? 'agendada' : 'ahora', fecha: estado.fecha, hora: estado.hora, tipo: estado.tipo,
+          aparato: estado.aparato, marca: estado.marca, urgente: estado.urgente, estado: esAgendada() ? 'Agendada' : 'En camino' };
+        estado.pedidos.unshift(estado.pedido);
         return ir(esAgendada() ? 's-cita' : 's-seguimiento');
       }
       case 'pagar':
+        if (estado.pedido) Object.assign(estado.pedido, { estado: 'Completado', total: estado.tecnico.total, calif: document.querySelectorAll('#calificar .on').length, fin: Date.now() });
         return ir('s-garantia');
       case 'reportar':
         $('#reporte-form').style.display = 'none';
@@ -1513,7 +1649,7 @@
       case 'reiniciar':
         historial.length = 0;
         document.querySelectorAll('.chip.sel').forEach(c => c.classList.remove('sel'));
-        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec() });
+        Object.assign(estado, INICIAL, { tecnico: TECNICOS[0], inicio: null, chats: {}, nombre: '', tec: nuevoTec(), pedidos: nuevosPedidos(), pedido: null });
         $('#barrio').value = estado.barrio;
         document.querySelectorAll('.error').forEach(p => { p.textContent = ''; });
         $('#form-registro').reset();

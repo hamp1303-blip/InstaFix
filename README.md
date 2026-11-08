@@ -28,7 +28,17 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 
 Solo **Aire acondicionado** pregunta la marca. **Electricidad** y **Plomería** pasan del trabajo a la fecha. Los trabajos de cada área están agrupados por categoría (por ejemplo, en plomería: «Tuberías y fugas», «Baño y cocina» y «Agua caliente y presión»). El servicio se arma con el tipo y el trabajo: «Instalación de luces», «Mantenimiento de aire split». Las opciones de cada área están en `APARATOS`, dentro del `<script>` de `index.html`.
 
-Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Volver al inicio** y **Cerrar sesión** reinician la demo.
+Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; las pantallas usan lo que se eligió. Todas las pantallas, menos la primera, tienen botón de volver. **Cerrar sesión** (lado del técnico) reinicia la demo; **Volver al inicio** lleva a Inicio sin borrar los pedidos.
+
+## Barra inferior: Mis pedidos, Inicio e Historial
+
+Desde que el cliente entra, casi todas las pantallas tienen una barra abajo con tres botones:
+
+- **Inicio** (al centro, destacado): vuelve a la pantalla de ¿Qué necesita?, con el botón de **Emergencia**.
+- **Mis pedidos** (a la izquierda): servicios en curso y citas agendadas, con su estado (**Agendada** o **En camino**). Al tocar uno se abre su cita o su seguimiento.
+- **Historial** (a la derecha): servicios terminados o cancelados, con técnico, fecha, precio y estrellas. Los dos primeros son ejemplos de muestra.
+
+Cada pedido se guarda al confirmar: pasa a Historial al pagar (**Completado**) o al cancelar la cita (**Cancelado**). La barra no aparece en el inicio de sesión, el registro, el chat, la llamada ni la vista del técnico. Todo se guarda solo mientras la página está abierta.
 
 ## Cita agendada
 

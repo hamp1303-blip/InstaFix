@@ -49,6 +49,13 @@ El naranja nunca es decoración: si no es una acción, una selección o la ruta,
 - Día y hora usan la misma regla: opción libre = borde gris, elegida = naranja, no disponible = atenuada (los días sin atención) o tachada (horas ocupadas). Nunca se esconde una opción: se muestra apagada para que se entienda por qué no está.
 - El interruptor de disponibilidad del técnico usa verde cuando está activo (estado, no acción).
 
+## Barra inferior
+
+- Tres destinos de primer nivel, siempre en el mismo orden: Mis pedidos · Inicio · Historial. Inicio va al centro dentro de un cuadro azul marino con el ícono naranja (como los íconos de oficio); si es la pestaña activa, se llena de naranja.
+- La pestaña activa se marca con texto en azul marino y el ícono en naranja oscuro. Las pantallas de un flujo cuentan como parte de su pestaña (el seguimiento es de Mis pedidos; el pago y la garantía, de Historial).
+- Se oculta donde se necesita la pantalla completa: entrada, chat y llamada.
+- Estados de un pedido: Agendada (naranja suave), En camino y Completado (verde), Cancelado (rojo suave).
+
 ## Estados
 
 Cada control tiene: normal, hover, foco visible (contorno naranja), presionado, deshabilitado y, donde aplica, cargando («Entrando…», «Creando cuenta…») y error (borde rojo y mensaje que dice qué falta).
