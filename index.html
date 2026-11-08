@@ -299,6 +299,23 @@
   .opcion:has(input:checked) { border-color: var(--naranja); background: var(--naranja-suave); }
   .recibido { display: none; }
 
+  /* Portada: elegir cómo se usa la app */
+  #s-rol { background: #FDF6EE; }
+  .portada-marca { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 20px 0 10px; }
+  .portada-marca .app-icono { width: 44px; height: 44px; border-radius: 12px; }
+  .portada-marca .wordmark { font-size: 34px; color: var(--tinta); }
+  .ilustracion { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%); mask-image: linear-gradient(to bottom, transparent, #000 14%); }
+  .portada-cuerpo { padding: 4px 24px 24px; text-align: center; }
+  .portada-cuerpo h1 { font-size: 34px; font-weight: 700; line-height: 1.08; letter-spacing: -.025em; margin: 12px 8px 12px; }
+  .portada-sub { color: var(--tinta); font-size: 16px; margin: 0 16px 24px; text-wrap: balance; }
+  .portada-cuerpo .boton { min-height: 56px; margin-bottom: 12px; font-size: 17px; }
+  .portada-cuerpo .boton svg { width: 24px; height: 24px; }
+  .portada-cuerpo .boton.contorno { border-width: 2px; }
+  .ya-cuenta { margin: 18px 0 14px; font-size: 15px; }
+  .enlace-naranja { color: var(--naranja-texto); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .enlace-naranja:hover { color: var(--naranja-hover); }
+  #s-rol .etiqueta-prototipo { margin: 0; }
+
   /* Rol (cliente o técnico) */
   .acceso .oficios { margin-bottom: 0; }
   .acceso h2 + .sub { margin: -12px 0 18px; }
@@ -482,28 +499,19 @@
 
   <!-- 0. Elegir cómo se usa la app (primera pantalla: no tiene a dónde volver) -->
   <section class="screen activa" id="s-rol">
-    <div class="marca">
+    <div class="portada-marca">
       <div class="app-icono"><svg><use href="#i-marca"/></svg></div>
-      <h1 class="wordmark">Insta<span>Fix</span></h1>
-      <p class="eslogan">Mantenimiento sin espera.</p>
+      <p class="wordmark">Insta<span>Fix</span></p>
     </div>
-    <div class="acceso">
-      <h2>¿Cómo vas a usar InstaFix?</h2>
-      <p class="sub">Elige una opción para empezar.</p>
-      <div class="oficios">
-        <button class="oficio" data-rol="cliente">
-          <span class="icono"><svg><use href="#i-casa"/></svg></span>
-          <span>Necesito un técnico<small>Pide plomería, electricidad o aire</small></span>
-          <svg class="chevron"><use href="#i-chevron"/></svg>
-        </button>
-        <button class="oficio" data-rol="tecnico">
-          <span class="icono"><svg><use href="#i-herramienta"/></svg></span>
-          <span>Soy técnico<small>Ofrece tus servicios y recibe trabajos</small></span>
-          <svg class="chevron"><use href="#i-chevron"/></svg>
-        </button>
-      </div>
+    <img class="ilustracion" src="ilustracion-inicio.jpg" width="734" height="512" alt="Un técnico sonriente con su caja de herramientas frente a una casa">
+    <div class="portada-cuerpo">
+      <h1>Soluciones para tu hogar.</h1>
+      <p class="portada-sub">Conecta con técnicos o comparte tu experiencia.</p>
+      <button class="boton" data-rol="cliente"><svg><use href="#i-casa"/></svg>Necesito un técnico</button>
+      <button class="boton contorno" data-rol="tecnico"><svg><use href="#i-herramienta"/></svg>Soy técnico</button>
+      <p class="ya-cuenta">¿Ya tienes cuenta? <button class="enlace-naranja" data-rol="cliente">Inicia sesión</button></p>
+      <p class="etiqueta-prototipo">Versión de demostración</p>
     </div>
-    <p class="etiqueta-prototipo">Prototipo con datos de ejemplo. No se guarda ninguna contraseña.</p>
   </section>
 
   <!-- 1. Inicio de sesión -->

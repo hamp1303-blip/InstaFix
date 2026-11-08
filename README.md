@@ -14,7 +14,7 @@ Las reglas visuales (logo, colores, tipografía, íconos y estados) están en [D
 
 ## Recorrido de la demo (reto de los 60 segundos)
 
-0. Primera pantalla → **Necesito un técnico** (cliente) o **Soy técnico** (ver más abajo)
+0. Portada («Soluciones para tu hogar.») → **Necesito un técnico** (cliente) o **Soy técnico** (ver más abajo). **Inicia sesión** va directo al inicio de sesión de cliente. La ilustración es el archivo `ilustracion-inicio.jpg`
 1. Inicio de sesión → escribir cualquier correo y contraseña y tocar **Iniciar sesión**, o tocar **Entrar como invitado** (aquí arranca el cronómetro). También están **Crear cuenta**, **Recordarme** y **¿Olvidaste tu contraseña?**; todo es simulado y la contraseña nunca se guarda
 2. Inicio → en **¿Qué necesita?** elegir el barrio en **Tu ubicación** (Bella Vista por defecto), el tipo de servicio (**Reparación**, **Instalación** o **Mantenimiento**) y el área: **Aire acondicionado**
 3. Aparato → **Aire split**
