@@ -23,7 +23,7 @@ Reglas visuales de la app. Si cambian algo en `index.html`, sigan esto para que 
 | `--neutro` | `#EFECE5` | Botones secundarios, chips de resumen |
 | `--gris` | `#565F73` | Texto secundario (contraste ≥ 4,5:1) |
 | `--verde` | `#17784A` | Verificado, garantía, éxito |
-| `--rojo` | `#BF2B1F` | Emergencia y errores |
+| `--rojo` | `#BF2B1F` | Errores y cancelaciones |
 
 El naranja nunca es decoración: si no es una acción, una selección o la ruta, no va en naranja.
 

@@ -34,7 +34,7 @@ Cualquier opción de los filtros y cualquiera de los tres técnicos funcionan; l
 
 Desde que el cliente entra, casi todas las pantallas tienen una barra abajo con tres botones:
 
-- **Inicio** (al centro, destacado): vuelve a la pantalla de ¿Qué necesita?, con el botón de **Emergencia**.
+- **Inicio** (al centro, destacado): vuelve a la pantalla de ¿Qué necesita?.
 - **Mis pedidos** (a la izquierda): servicios en curso y citas agendadas, con su estado (**Agendada** o **En camino**). Al tocar uno se abre su cita o su seguimiento.
 - **Historial** (a la derecha): servicios terminados o cancelados, con técnico, fecha, precio y estrellas. Los dos primeros son ejemplos de muestra.
 
@@ -49,8 +49,7 @@ La fecha se elige **antes** de escoger al técnico, para saber quién está libr
 
 En la lista, los técnicos libres a la hora elegida se pueden tocar, y los demás aparecen apagados bajo «No disponibles a esa hora» (Ana, por ejemplo, no atiende fines de semana). Cada técnico tiene su propia agenda.
 
-Después de **Confirmar cita** aparece la pantalla **Cita agendada** con el resumen, **Llamar** y **Mensaje**, y tres botones: **Simular el día de la cita** (sigue con el seguimiento, el pago y la garantía), **Reprogramar** y **Cancelar cita** (gratis hasta 2 horas antes). **Reprogramar** vuelve a elegir fecha y técnico. Una **Emergencia** no se agenda: salta la fecha y va directo a la lista de técnicos.
-
+Después de **Confirmar cita** aparece la pantalla **Cita agendada** con el resumen, **Llamar** y **Mensaje**, y tres botones: **Simular el día de la cita** (sigue con el seguimiento, el pago y la garantía), **Reprogramar** y **Cancelar cita** (gratis hasta 2 horas antes). **Reprogramar** vuelve a elegir fecha y técnico.
 Las horas ocupadas son de ejemplo. Los días y horarios de cada técnico están en `TECNICOS` (`dias`, `desde`, `hasta`).
 
 ## Lado del técnico

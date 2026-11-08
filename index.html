@@ -190,14 +190,6 @@
   .oficio > span:nth-child(2) { flex: 1; }
   .oficio small { display: block; font-size: 14px; font-weight: 400; color: var(--gris); }
   .oficio .chevron { width: 18px; height: 18px; color: var(--gris); }
-  .emergencia {
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    width: 100%; min-height: 52px; border-radius: var(--radio-control);
-    border: 1.5px solid var(--rojo); color: var(--rojo); font-weight: 600; font-size: 16px;
-    transition: background .15s;
-  }
-  .emergencia:hover { background: var(--rojo-claro); }
-  .emergencia svg { width: 20px; height: 20px; }
 
   /* Chips de filtro */
   .chips { display: flex; flex-wrap: wrap; gap: 10px; }
@@ -478,7 +470,7 @@
      títulos en negrita y botones grandes */
   h2 { font-size: 28px; font-weight: 700; letter-spacing: -.025em; }
   .seccion { font-weight: 700; }
-  .boton, .emergencia { min-height: 56px; font-size: 17px; }
+  .boton { min-height: 56px; font-size: 17px; }
   .boton.secundario { background: var(--tarjeta); border: 1.5px solid var(--tarjeta-borde); }
   .boton.secundario:hover { background: var(--tarjeta-sel); }
   .chip, .tarjeta, .modo, .dia, .hora, .opcion { background: var(--tarjeta); border-color: var(--tarjeta-borde); }
@@ -665,9 +657,6 @@
         </svg>
         <span>Aire acondicionado</span>
       </button>
-    </div>
-    <div class="abajo">
-      <button class="emergencia" data-accion="emergencia"><svg><use href="#i-alerta"/></svg>Emergencia</button>
     </div>
   </section>
 
@@ -1051,7 +1040,7 @@
   };
   const esAire = a => Object.values(APARATOS['Aire acondicionado']).flat().includes(a);
 
-  const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', urgente: false, modo: 'ahora', fecha: null, hora: null };
+  const INICIAL = { rol: 'cliente', oficioTec: 'Aire acondicionado', oficio: 'Aire acondicionado', tipo: 'Reparación', aparato: 'Aire split', marca: 'Marca X', barrio: 'Bella Vista', modo: 'ahora', fecha: null, hora: null };
   const nuevoTec = () => ({ disponible: true, solicitud: 'nueva' });
   // Pedidos del cliente: los dos primeros del historial son ejemplos de muestra
   const haceDias = n => Date.now() - n * 864e5;
@@ -1089,7 +1078,7 @@
   const fechaLarga = d => mayus(d.toLocaleDateString('es-PA', { weekday: 'long', day: 'numeric', month: 'long' }));
   const hora12 = h => h === 12 ? '12:00 p. m.' : h > 12 ? `${h - 12}:00 p. m.` : `${h}:00 a. m.`;
   // Nombre del servicio pedido: tipo + aparato o trabajo ("Instalación de luces")
-  const servicio = () => estado.urgente ? `Emergencia: ${estado.aparato.toLowerCase()}` : `${estado.tipo} de ${estado.aparato.toLowerCase()}`;
+  const servicio = () => `${estado.tipo} de ${estado.aparato.toLowerCase()}`;
   const esAgendada = () => estado.modo === 'agendada' && estado.fecha && estado.hora != null;
   const proximosDias = () => Array.from({ length: 7 }, (_, i) => {
     const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() + i); return d;
@@ -1237,16 +1226,12 @@
     }
     if (id === 's-aparato') {
       const aire = estado.oficio === 'Aire acondicionado';
-      // En una emergencia se muestran las tres áreas, cada una con todos sus trabajos
-      const grupos = estado.oficio === 'Emergencia'
-        ? Object.entries(APARATOS).map(([area, cats]) => [area, Object.values(cats).flat()])
-        : Object.entries(APARATOS[estado.oficio]);
-      $('#opciones-aparato').innerHTML = grupos.map(([titulo, items]) => `
+      $('#opciones-aparato').innerHTML = Object.entries(APARATOS[estado.oficio]).map(([titulo, items]) => `
         <p class="categoria">${titulo}</p>
         <div class="chips" data-campo="aparato">${items.map(o => `<button class="chip${o === estado.aparato ? ' sel' : ''}">${o}</button>`).join('')}</div>`).join('');
       texto('aparato-titulo', aire ? '¿Qué aparato es?' : '¿Qué trabajo necesitas?');
       texto('aparato-sub', aire ? 'Así te mostramos técnicos que ya lo conocen.' : 'Así te mostramos técnicos que ya lo hacen.');
-      const pasos = estado.urgente ? ['Último paso', '100%'] : aire ? ['Paso 1 de 3', '33%'] : ['Paso 1 de 2', '50%'];
+      const pasos = aire ? ['Paso 1 de 3', '33%'] : ['Paso 1 de 2', '50%'];
       texto('paso-aparato', pasos[0]);
       $('#progreso-aparato').style.width = pasos[1];
     }
@@ -1410,7 +1395,7 @@
   function abrirPedido(id) {
     const p = estado.pedidos.find(x => x.id === +id);
     Object.assign(estado, { tecnico: p.tecnico, barrio: p.barrio, modo: p.modo, fecha: p.fecha, hora: p.hora, tipo: p.tipo,
-      aparato: p.aparato, marca: p.marca, urgente: p.urgente, pedido: p });
+      aparato: p.aparato, marca: p.marca, pedido: p });
     $('#barrio').value = estado.barrio;
     ir(p.estado === 'Agendada' ? 's-cita' : 's-seguimiento');
   }
@@ -1603,7 +1588,7 @@
     if (el.dataset.pedido) return abrirPedido(el.dataset.pedido);
     if (el.dataset.tipo) { estado.tipo = el.dataset.tipo; return pintarTipos(); }
     if (el.dataset.oficio) {
-      Object.assign(estado, { oficio: el.dataset.oficio, urgente: false, aparato: '', modo: 'ahora', fecha: null, hora: null, pedido: null });
+      Object.assign(estado, { oficio: el.dataset.oficio, aparato: '', modo: 'ahora', fecha: null, hora: null, pedido: null });
       return ir('s-aparato');
     }
     if (el.dataset.tecnico) {
@@ -1621,10 +1606,8 @@
       grupo.querySelectorAll('.chip').forEach(c => c.classList.remove('sel'));
       el.classList.add('sel');
       estado[grupo.dataset.campo] = el.textContent.trim();
-      // una emergencia no se agenda: salta la fecha y va directo a los técnicos
-      const alCuando = () => { if (estado.urgente) estado.modo = 'ahora'; return estado.urgente ? 's-lista' : 's-cuando'; };
-      const siguiente = () => grupo.dataset.campo === 'aparato' && esAire(estado.aparato) ? 's-marca' : alCuando();
-      return setTimeout(() => ir(siguiente()), 150);
+      const siguiente = grupo.dataset.campo === 'aparato' && esAire(estado.aparato) ? 's-marca' : 's-cuando';
+      return setTimeout(() => ir(siguiente), 150);
     }
 
     if (el.parentElement && el.parentElement.id === 'calificar') {
@@ -1644,9 +1627,6 @@
         el.setAttribute('aria-label', campo.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña');
         return;
       }
-      case 'emergencia':
-        Object.assign(estado, { oficio: 'Emergencia', urgente: true, aparato: '', modo: 'ahora', fecha: null, hora: null, pedido: null });
-        return ir('s-aparato');
       case 'atras':
       case 'colgar':
         return atras();
@@ -1693,7 +1673,7 @@
         estado.pedidos = estado.pedidos.filter(p => p !== estado.pedido);
         estado.pedido = { id: Date.now(), servicio: servicio() + (esAire(estado.aparato) ? ` – ${estado.marca}` : ''), tecnico: estado.tecnico,
           barrio: estado.barrio, modo: esAgendada() ? 'agendada' : 'ahora', fecha: estado.fecha, hora: estado.hora, tipo: estado.tipo,
-          aparato: estado.aparato, marca: estado.marca, urgente: estado.urgente, estado: esAgendada() ? 'Agendada' : 'En camino' };
+          aparato: estado.aparato, marca: estado.marca, estado: esAgendada() ? 'Agendada' : 'En camino' };
         estado.pedidos.unshift(estado.pedido);
         return ir(esAgendada() ? 's-cita' : 's-seguimiento');
       }
