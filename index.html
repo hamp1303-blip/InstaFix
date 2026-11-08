@@ -18,19 +18,22 @@
     --naranja-hover: #E27A14;
     --naranja-texto: #A9520A;  /* naranja legible sobre fondos claros */
     --naranja-suave: #FDEBD8;
-    --fondo: #F7F5F0;          /* superficie de la app, blanco cálido como la hoja de marca */
+    --fondo: #FDF6EE;          /* superficie de la app: crema cálido, igual que la portada */
     --superficie: #FFFFFF;
-    --neutro: #EFECE5;         /* segunda capa neutra: controles secundarios */
-    --borde: #E1DCD1;
-    --borde-fuerte: #CFC8BA;
+    --neutro: #F4E9DD;         /* segunda capa neutra: controles secundarios */
+    --borde: #EADCCB;
+    --borde-fuerte: #DCC9B3;
+    --tarjeta: #FEF1E4;        /* tarjetas y opciones elegibles: durazno suave con borde */
+    --tarjeta-borde: #F6D7BB;
+    --tarjeta-sel: #FDE3C8;
     --gris: #565F73;
     --placeholder: #6B7385;
     --verde: #17784A;
     --verde-claro: #E3F1E8;
     --rojo: #BF2B1F;
     --rojo-claro: #FBE9E6;
-    --radio: 14px;
-    --radio-control: 12px;
+    --radio: 16px;
+    --radio-control: 14px;
     --sombra: 0 12px 32px -10px rgba(19, 33, 60, .22);
     --salida: cubic-bezier(.16, 1, .3, 1);
   }
@@ -470,6 +473,32 @@
   }
   .aviso.ver { transform: none; visibility: visible; }
   .aviso small { display: block; font-weight: 400; color: #C9D0DE; font-size: 14px; }
+
+  /* Mismo diseño que la portada y Inicio en todas las pantallas: crema, tarjetas durazno con borde (sin sombra),
+     títulos en negrita y botones grandes */
+  h2 { font-size: 28px; font-weight: 700; letter-spacing: -.025em; }
+  .seccion { font-weight: 700; }
+  .boton, .emergencia { min-height: 56px; font-size: 17px; }
+  .boton.secundario { background: var(--tarjeta); border: 1.5px solid var(--tarjeta-borde); }
+  .boton.secundario:hover { background: var(--tarjeta-sel); }
+  .chip, .tarjeta, .modo, .dia, .hora, .opcion { background: var(--tarjeta); border-color: var(--tarjeta-borde); }
+  .chip { min-height: 46px; border-radius: 14px; }
+  .tarjeta { border-width: 1.5px; }
+  .chip:hover, .modo:hover, .tarjeta:hover, .dia:hover:not(:disabled), .hora:hover:not(:disabled) { border-color: var(--naranja); }
+  .chip.sel, .modo.sel, .dia.sel, .hora.sel, .opcion:has(input:checked) { background: var(--tarjeta-sel); border-color: var(--naranja); }
+  .tarjeta:active { background: var(--tarjeta-sel); }
+  .tarjeta:disabled, .tarjeta:disabled:hover, .tarjeta.fija:hover { border-color: var(--tarjeta-borde); }
+  .rapidas .chip { border-radius: 999px; }
+
+  /* Inicio de sesión y registro: logo centrado sobre el crema, sin bloque azul */
+  .marca { position: relative; background: transparent; color: var(--tinta); text-align: center; padding: 20px 24px 12px; }
+  .marca .atras { position: absolute; left: 16px; top: 16px; margin: 0; background: var(--superficie); border: 1px solid var(--borde); color: var(--tinta); }
+  .marca .atras:hover { background: var(--neutro); }
+  .marca .app-icono { width: 52px; height: 52px; margin: 6px auto 12px; }
+  .marca .wordmark { font-size: 34px; }
+  .marca .eslogan { color: var(--gris); margin-top: 6px; }
+  .acceso { margin: 8px 16px 0; box-shadow: none; border: 1.5px solid var(--tarjeta-borde); border-radius: 20px; }
+  #s-registro .acceso { border: 0; }
 </style>
 </head>
 <body>

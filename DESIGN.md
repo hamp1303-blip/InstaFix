@@ -17,7 +17,8 @@ Reglas visuales de la app. Si cambian algo en `index.html`, sigan esto para que 
 | `--tinta` | `#13213C` | Texto principal, encabezado de marca, íconos de oficio |
 | `--naranja` | `#F28C28` | Solo acción principal (botones), selección actual y la ruta del mapa |
 | `--naranja-texto` | `#A9520A` | Naranja cuando es texto sobre fondo claro (legible) |
-| `--fondo` | `#F7F5F0` | Fondo de la app (blanco cálido, como la hoja de marca) |
+| `--fondo` | `#FDF6EE` | Fondo de la app: crema cálido, igual que la portada |
+| `--tarjeta` / `--tarjeta-borde` / `--tarjeta-sel` | `#FEF1E4` / `#F6D7BB` / `#FDE3C8` | Tarjetas y opciones elegibles (áreas, técnicos, chips, día y hora): durazno suave con borde; la elegida lleva borde naranja y fondo más intenso |
 | `--superficie` | `#FFFFFF` | Tarjetas, campos, listas |
 | `--neutro` | `#EFECE5` | Botones secundarios, chips de resumen |
 | `--gris` | `#565F73` | Texto secundario (contraste ≥ 4,5:1) |
@@ -34,9 +35,11 @@ El naranja nunca es decoración: si no es una acción, una selección o la ruta,
 
 ## Forma y profundidad
 
-- Botones y campos: alto 48–52 px, esquinas de 12 px. Una sola forma de botón en toda la app.
-- Tarjetas y listas: esquinas de 14 px y **borde de 1 px, sin sombra**. La única sombra es la de la tarjeta de inicio de sesión y la del aviso flotante.
-- Chips (filtros y respuestas rápidas): forma de píldora, porque son controles pequeños.
+- Botones y campos: botones de 56 px de alto y campos de 48 px, esquinas de 14 px. Una sola forma de botón en toda la app.
+- Tarjetas y listas: esquinas de 16 px y **borde, sin sombra**. Lo elegible va en durazno (`--tarjeta`); la información (filas de resumen, cifras) va en blanco. La única sombra es la del aviso flotante.
+- Títulos de pantalla en negrita (700), 28 px; el titular de Inicio y de la portada, 30–34 px.
+- Chips de filtro: rectángulo redondeado de 14 px; las respuestas rápidas del chat siguen en píldora.
+- Inicio de sesión y registro: logo centrado sobre el crema, sin bloque azul.
 
 ## Íconos
 
